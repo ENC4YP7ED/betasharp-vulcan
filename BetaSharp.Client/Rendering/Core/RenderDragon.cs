@@ -1,6 +1,7 @@
 using BetaSharp.Client.Rendering.Core.OpenGL;
 using BetaSharp.Client.Rendering.Core.Textures;
 using Microsoft.Extensions.Logging;
+using Silk.NET.Maths;
 using Silk.NET.OpenGL;
 
 namespace BetaSharp.Client.Rendering.Core;
@@ -63,6 +64,7 @@ public static class RenderDragon
     public static IShader CreateShader(string vertexShaderSource, string fragmentShaderSource) => Backend.CreateShader(vertexShaderSource, fragmentShaderSource);
     public static IVertexArray CreateVertexArray() => Backend.CreateVertexArray();
     public static IVertexBuffer<T> CreateVertexBuffer<T>(Span<T> data) where T : unmanaged => Backend.CreateVertexBuffer(data);
+    public static void CaptureMatrices(out Matrix4X4<float> modelViewMatrix, out Matrix4X4<float> projectionMatrix) => Backend.CaptureMatrices(out modelViewMatrix, out projectionMatrix);
 
     public static void UnbindFramebuffer()
     {
