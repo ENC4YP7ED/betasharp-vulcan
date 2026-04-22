@@ -22,7 +22,7 @@ using Silk.NET.Maths;
 
 namespace BetaSharp.Client.Rendering;
 
-public class WorldRenderer : IWorldEventListener
+public class WorldRenderer : IWorldEventListener, IDisposable
 {
     public int CountEntitiesTotal { get; private set; }
     public int CountEntitiesRendered { get; private set; }
@@ -34,68 +34,25 @@ public class WorldRenderer : IWorldEventListener
     private readonly TextureManager _textureManager;
     private readonly BetaSharp _game;
     private int _cloudOffsetX;
-    private readonly int _starGLCallList;
-    private readonly int _glSkyList;
-    private readonly int _glSkyList2;
-    private int _glCloudsList = -1;
+    private readonly ILegacyMesh _starMesh;
+    private readonly ILegacyMesh _skyTopMesh;
+    private readonly ILegacyMesh _skyBottomMesh;
+    private readonly ILegacyMesh[] _cloudMeshes;
     private int _renderDistance = -1;
     private int _renderEntitiesStartupCounter = 2;
+    private bool _disposed;
 
     public WorldRenderer(BetaSharp gameInstance, TextureManager textureManager)
     {
         _game = gameInstance;
         _textureManager = textureManager;
 
-        _starGLCallList = GLAllocation.generateDisplayLists(3);
-        RenderDragon.Api.PushMatrix();
-        RenderDragon.Api.NewList((uint)_starGLCallList, GLEnum.Compile);
-        RenderStars();
-        RenderDragon.Api.EndList();
-        RenderDragon.Api.PopMatrix();
-        Tessellator var4 = Tessellator.instance;
-        _glSkyList = _starGLCallList + 1;
-        RenderDragon.Api.NewList((uint)_glSkyList, GLEnum.Compile);
-        byte var6 = 64;
-        int var7 = 256 / var6 + 2;
-        float var5 = 16.0F;
+        _starMesh = BuildStarMesh();
+        _skyTopMesh = BuildSkyPlaneMesh(16.0F, topFacing: true);
+        _skyBottomMesh = BuildSkyPlaneMesh(-16.0F, topFacing: false);
+        _cloudMeshes = BuildCloudMeshes();
 
         ChunkRenderer = new(gameInstance.World, () => _game.Options.AlternateBlocksEnabled);
-
-        int var8;
-        int var9;
-        for (var8 = -var6 * var7; var8 <= var6 * var7; var8 += var6)
-        {
-            for (var9 = -var6 * var7; var9 <= var6 * var7; var9 += var6)
-            {
-                var4.startDrawingQuads();
-                var4.addVertex(var8 + 0, (double)var5, var9 + 0);
-                var4.addVertex(var8 + var6, (double)var5, var9 + 0);
-                var4.addVertex(var8 + var6, (double)var5, var9 + var6);
-                var4.addVertex(var8 + 0, (double)var5, var9 + var6);
-                var4.draw();
-            }
-        }
-
-        RenderDragon.Api.EndList();
-        _glSkyList2 = _starGLCallList + 2;
-        RenderDragon.Api.NewList((uint)_glSkyList2, GLEnum.Compile);
-        var5 = -16.0F;
-        var4.startDrawingQuads();
-
-        for (var8 = -var6 * var7; var8 <= var6 * var7; var8 += var6)
-        {
-            for (var9 = -var6 * var7; var9 <= var6 * var7; var9 += var6)
-            {
-                var4.addVertex(var8 + var6, (double)var5, var9 + 0);
-                var4.addVertex(var8 + 0, (double)var5, var9 + 0);
-                var4.addVertex(var8 + 0, (double)var5, var9 + var6);
-                var4.addVertex(var8 + var6, (double)var5, var9 + var6);
-            }
-        }
-
-        var4.draw();
-        RenderDragon.Api.EndList();
-        BuildCloudDisplayLists();
     }
 
     private static void RenderStars()
@@ -147,6 +104,162 @@ public class WorldRenderer : IWorldEventListener
         }
 
         tessellator.draw();
+    }
+
+    private static ILegacyMesh CaptureLegacyMesh(Action<Tessellator> build, LegacyMeshLayout layout)
+    {
+        Tessellator tessellator = Tessellator.instance;
+        tessellator.startCapture(TesselatorCaptureVertexFormat.Default);
+        build(tessellator);
+
+        using PooledList<Vertex> vertices = tessellator.endCaptureVertices();
+        return RenderDragon.CreateLegacyMesh(vertices.Span, layout);
+    }
+
+    private static ILegacyMesh BuildStarMesh() =>
+        CaptureLegacyMesh(
+            static _ => RenderStars(),
+            new LegacyMeshLayout(false, false, false));
+
+    private static ILegacyMesh BuildSkyPlaneMesh(float height, bool topFacing)
+    {
+        return CaptureLegacyMesh(
+            tessellator =>
+            {
+                const byte tileSize = 64;
+                int radius = 256 / tileSize + 2;
+
+                tessellator.startDrawingQuads();
+                for (int x = -tileSize * radius; x <= tileSize * radius; x += tileSize)
+                {
+                    for (int z = -tileSize * radius; z <= tileSize * radius; z += tileSize)
+                    {
+                        if (topFacing)
+                        {
+                            tessellator.addVertex(x + 0, height, z + 0);
+                            tessellator.addVertex(x + tileSize, height, z + 0);
+                            tessellator.addVertex(x + tileSize, height, z + tileSize);
+                            tessellator.addVertex(x + 0, height, z + tileSize);
+                        }
+                        else
+                        {
+                            tessellator.addVertex(x + tileSize, height, z + 0);
+                            tessellator.addVertex(x + 0, height, z + 0);
+                            tessellator.addVertex(x + 0, height, z + tileSize);
+                            tessellator.addVertex(x + tileSize, height, z + tileSize);
+                        }
+                    }
+                }
+
+                tessellator.draw();
+            },
+            new LegacyMeshLayout(false, false, false));
+    }
+
+    private static ILegacyMesh BuildCloudMesh(int face)
+    {
+        return CaptureLegacyMesh(
+            tessellator =>
+            {
+                tessellator.startDrawingQuads();
+                float cloudHeight = 4.0F;
+                float uvScale = 1.0F / 256.0F;
+                float inset = 1.0F / 1024.0F;
+                const byte tileSize = 8;
+                const byte radius = 3;
+
+                for (int x = -radius + 1; x <= radius; ++x)
+                {
+                    for (int z = -radius + 1; z <= radius; ++z)
+                    {
+                        float x0 = x * tileSize;
+                        float z0 = z * tileSize;
+
+                        if (face == 0)
+                        {
+                            tessellator.setNormal(0.0F, -1.0F, 0.0F);
+                            tessellator.addVertexWithUV(x0 + 0.0F, 0.0F, z0 + tileSize, (x0 + 0.0F) * uvScale, (z0 + tileSize) * uvScale);
+                            tessellator.addVertexWithUV(x0 + tileSize, 0.0F, z0 + tileSize, (x0 + tileSize) * uvScale, (z0 + tileSize) * uvScale);
+                            tessellator.addVertexWithUV(x0 + tileSize, 0.0F, z0 + 0.0F, (x0 + tileSize) * uvScale, (z0 + 0.0F) * uvScale);
+                            tessellator.addVertexWithUV(x0 + 0.0F, 0.0F, z0 + 0.0F, (x0 + 0.0F) * uvScale, (z0 + 0.0F) * uvScale);
+                        }
+                        else if (face == 1)
+                        {
+                            tessellator.setNormal(0.0F, 1.0F, 0.0F);
+                            tessellator.addVertexWithUV(x0 + 0.0F, cloudHeight - inset, z0 + tileSize, (x0 + 0.0F) * uvScale, (z0 + tileSize) * uvScale);
+                            tessellator.addVertexWithUV(x0 + tileSize, cloudHeight - inset, z0 + tileSize, (x0 + tileSize) * uvScale, (z0 + tileSize) * uvScale);
+                            tessellator.addVertexWithUV(x0 + tileSize, cloudHeight - inset, z0 + 0.0F, (x0 + tileSize) * uvScale, (z0 + 0.0F) * uvScale);
+                            tessellator.addVertexWithUV(x0 + 0.0F, cloudHeight - inset, z0 + 0.0F, (x0 + 0.0F) * uvScale, (z0 + 0.0F) * uvScale);
+                        }
+                        else if (face == 2)
+                        {
+                            if (x > -1)
+                            {
+                                tessellator.setNormal(-1.0F, 0.0F, 0.0F);
+                                for (int edge = 0; edge < tileSize; ++edge)
+                                {
+                                    tessellator.addVertexWithUV(x0 + edge + 0.0F, 0.0F, z0 + tileSize, (x0 + edge + 0.5F) * uvScale, (z0 + tileSize) * uvScale);
+                                    tessellator.addVertexWithUV(x0 + edge + 0.0F, cloudHeight, z0 + tileSize, (x0 + edge + 0.5F) * uvScale, (z0 + tileSize) * uvScale);
+                                    tessellator.addVertexWithUV(x0 + edge + 0.0F, cloudHeight, z0 + 0.0F, (x0 + edge + 0.5F) * uvScale, (z0 + 0.0F) * uvScale);
+                                    tessellator.addVertexWithUV(x0 + edge + 0.0F, 0.0F, z0 + 0.0F, (x0 + edge + 0.5F) * uvScale, (z0 + 0.0F) * uvScale);
+                                }
+                            }
+
+                            if (x <= 1)
+                            {
+                                tessellator.setNormal(1.0F, 0.0F, 0.0F);
+                                for (int edge = 0; edge < tileSize; ++edge)
+                                {
+                                    tessellator.addVertexWithUV(x0 + edge + 1.0F - inset, 0.0F, z0 + tileSize, (x0 + edge + 0.5F) * uvScale, (z0 + tileSize) * uvScale);
+                                    tessellator.addVertexWithUV(x0 + edge + 1.0F - inset, cloudHeight, z0 + tileSize, (x0 + edge + 0.5F) * uvScale, (z0 + tileSize) * uvScale);
+                                    tessellator.addVertexWithUV(x0 + edge + 1.0F - inset, cloudHeight, z0 + 0.0F, (x0 + edge + 0.5F) * uvScale, (z0 + 0.0F) * uvScale);
+                                    tessellator.addVertexWithUV(x0 + edge + 1.0F - inset, 0.0F, z0 + 0.0F, (x0 + edge + 0.5F) * uvScale, (z0 + 0.0F) * uvScale);
+                                }
+                            }
+                        }
+                        else if (face == 3)
+                        {
+                            if (z > -1)
+                            {
+                                tessellator.setNormal(0.0F, 0.0F, -1.0F);
+                                for (int edge = 0; edge < tileSize; ++edge)
+                                {
+                                    tessellator.addVertexWithUV(x0 + 0.0F, cloudHeight, z0 + edge + 0.0F, (x0 + 0.0F) * uvScale, (z0 + edge + 0.5F) * uvScale);
+                                    tessellator.addVertexWithUV(x0 + tileSize, cloudHeight, z0 + edge + 0.0F, (x0 + tileSize) * uvScale, (z0 + edge + 0.5F) * uvScale);
+                                    tessellator.addVertexWithUV(x0 + tileSize, 0.0F, z0 + edge + 0.0F, (x0 + tileSize) * uvScale, (z0 + edge + 0.5F) * uvScale);
+                                    tessellator.addVertexWithUV(x0 + 0.0F, 0.0F, z0 + edge + 0.0F, (x0 + 0.0F) * uvScale, (z0 + edge + 0.5F) * uvScale);
+                                }
+                            }
+
+                            if (z <= 1)
+                            {
+                                tessellator.setNormal(0.0F, 0.0F, 1.0F);
+                                for (int edge = 0; edge < tileSize; ++edge)
+                                {
+                                    tessellator.addVertexWithUV(x0 + 0.0F, cloudHeight, z0 + edge + 1.0F - inset, (x0 + 0.0F) * uvScale, (z0 + edge + 0.5F) * uvScale);
+                                    tessellator.addVertexWithUV(x0 + tileSize, cloudHeight, z0 + edge + 1.0F - inset, (x0 + tileSize) * uvScale, (z0 + edge + 0.5F) * uvScale);
+                                    tessellator.addVertexWithUV(x0 + tileSize, 0.0F, z0 + edge + 1.0F - inset, (x0 + tileSize) * uvScale, (z0 + edge + 0.5F) * uvScale);
+                                    tessellator.addVertexWithUV(x0 + 0.0F, 0.0F, z0 + edge + 1.0F - inset, (x0 + 0.0F) * uvScale, (z0 + edge + 0.5F) * uvScale);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                tessellator.draw();
+            },
+            new LegacyMeshLayout(true, false, true));
+    }
+
+    private static ILegacyMesh[] BuildCloudMeshes()
+    {
+        ILegacyMesh[] meshes = new ILegacyMesh[4];
+        for (int i = 0; i < meshes.Length; i++)
+        {
+            meshes[i] = BuildCloudMesh(i);
+        }
+
+        return meshes;
     }
 
     public void ChangeWorld(World world)
@@ -335,7 +448,7 @@ public class WorldRenderer : IWorldEventListener
             RenderDragon.Api.DepthMask(false);
             RenderDragon.Api.Enable(GLEnum.Fog);
             RenderDragon.Api.Color3(var3, var4, var5);
-            RenderDragon.Api.CallList((uint)_glSkyList);
+            _skyTopMesh.Draw();
             RenderDragon.Api.Disable(GLEnum.Fog);
             RenderDragon.Api.Disable(GLEnum.AlphaTest);
             RenderDragon.Api.Enable(GLEnum.Blend);
@@ -410,7 +523,7 @@ public class WorldRenderer : IWorldEventListener
             if (var12 > 0.0F)
             {
                 RenderDragon.Api.Color4(var12, var12, var12, var12);
-                RenderDragon.Api.CallList((uint)_starGLCallList);
+                _starMesh.Draw();
             }
 
             RenderDragon.Api.Color4(1.0F, 1.0F, 1.0F, 1.0F);
@@ -428,7 +541,7 @@ public class WorldRenderer : IWorldEventListener
             }
 
             RenderDragon.Api.Disable(GLEnum.Texture2D);
-            RenderDragon.Api.CallList((uint)_glSkyList2);
+            _skyBottomMesh.Draw();
             RenderDragon.Api.Enable(GLEnum.Texture2D);
             RenderDragon.Api.DepthMask(true);
         }
@@ -442,106 +555,6 @@ public class WorldRenderer : IWorldEventListener
             {
                 RenderCloudsFancy(var1);
             }
-        }
-    }
-
-    private void BuildCloudDisplayLists()
-    {
-        _glCloudsList = GLAllocation.generateDisplayLists(4);
-        Tessellator tessellator = Tessellator.instance;
-
-        for (int i = 0; i < 4; ++i)
-        {
-            RenderDragon.Api.NewList((uint)(_glCloudsList + i), GLEnum.Compile);
-            tessellator.startDrawingQuads();
-            float cloudHeight = 4.0F;
-            float uvScale = 1.0F / 256.0F;
-            float var24 = 1.0F / 1024.0F;
-            byte var22 = 8;
-            byte var23 = 3;
-
-            for (int var26 = -var23 + 1; var26 <= var23; ++var26)
-            {
-                for (int var27 = -var23 + 1; var27 <= var23; ++var27)
-                {
-                    float var28 = var26 * var22;
-                    float var29 = var27 * var22;
-                    float var30 = var28;
-                    float var31 = var29;
-
-                    if (i == 0)
-                    {
-                        tessellator.setNormal(0.0F, -1.0F, 0.0F);
-                        tessellator.addVertexWithUV((double)(var30 + 0.0F), (double)(0.0F), (double)(var31 + var22), (double)((var28 + 0.0F) * uvScale), (double)((var29 + var22) * uvScale));
-                        tessellator.addVertexWithUV((double)(var30 + var22), (double)(0.0F), (double)(var31 + var22), (double)((var28 + var22) * uvScale), (double)((var29 + var22) * uvScale));
-                        tessellator.addVertexWithUV((double)(var30 + var22), (double)(0.0F), (double)(var31 + 0.0F), (double)((var28 + var22) * uvScale), (double)((var29 + 0.0F) * uvScale));
-                        tessellator.addVertexWithUV((double)(var30 + 0.0F), (double)(0.0F), (double)(var31 + 0.0F), (double)((var28 + 0.0F) * uvScale), (double)((var29 + 0.0F) * uvScale));
-                    }
-
-                    else if (i == 1)
-                    {
-                        tessellator.setNormal(0.0F, 1.0F, 0.0F);
-                        tessellator.addVertexWithUV((double)(var30 + 0.0F), (double)(cloudHeight - var24), (double)(var31 + var22), (double)((var28 + 0.0F) * uvScale), (double)((var29 + var22) * uvScale));
-                        tessellator.addVertexWithUV((double)(var30 + var22), (double)(cloudHeight - var24), (double)(var31 + var22), (double)((var28 + var22) * uvScale), (double)((var29 + var22) * uvScale));
-                        tessellator.addVertexWithUV((double)(var30 + var22), (double)(cloudHeight - var24), (double)(var31 + 0.0F), (double)((var28 + var22) * uvScale), (double)((var29 + 0.0F) * uvScale));
-                        tessellator.addVertexWithUV((double)(var30 + 0.0F), (double)(cloudHeight - var24), (double)(var31 + 0.0F), (double)((var28 + 0.0F) * uvScale), (double)((var29 + 0.0F) * uvScale));
-                    }
-
-                    else if (i == 2)
-                    {
-                        if (var26 > -1)
-                        {
-                            tessellator.setNormal(-1.0F, 0.0F, 0.0F);
-                            for (int var32 = 0; var32 < var22; ++var32)
-                            {
-                                tessellator.addVertexWithUV((double)(var30 + var32 + 0.0F), (double)(0.0F), (double)(var31 + var22), (double)((var28 + var32 + 0.5F) * uvScale), (double)((var29 + var22) * uvScale));
-                                tessellator.addVertexWithUV((double)(var30 + var32 + 0.0F), (double)(cloudHeight), (double)(var31 + var22), (double)((var28 + var32 + 0.5F) * uvScale), (double)((var29 + var22) * uvScale));
-                                tessellator.addVertexWithUV((double)(var30 + var32 + 0.0F), (double)(cloudHeight), (double)(var31 + 0.0F), (double)((var28 + var32 + 0.5F) * uvScale), (double)((var29 + 0.0F) * uvScale));
-                                tessellator.addVertexWithUV((double)(var30 + var32 + 0.0F), (double)(0.0F), (double)(var31 + 0.0F), (double)((var28 + var32 + 0.5F) * uvScale), (double)((var29 + 0.0F) * uvScale));
-                            }
-                        }
-                        if (var26 <= 1)
-                        {
-                            tessellator.setNormal(1.0F, 0.0F, 0.0F);
-                            for (int var32 = 0; var32 < var22; ++var32)
-                            {
-                                tessellator.addVertexWithUV((double)(var30 + var32 + 1.0F - var24), (double)(0.0F), (double)(var31 + var22), (double)((var28 + var32 + 0.5F) * uvScale), (double)((var29 + var22) * uvScale));
-                                tessellator.addVertexWithUV((double)(var30 + var32 + 1.0F - var24), (double)(cloudHeight), (double)(var31 + var22), (double)((var28 + var32 + 0.5F) * uvScale), (double)((var29 + var22) * uvScale));
-                                tessellator.addVertexWithUV((double)(var30 + var32 + 1.0F - var24), (double)(cloudHeight), (double)(var31 + 0.0F), (double)((var28 + var32 + 0.5F) * uvScale), (double)((var29 + 0.0F) * uvScale));
-                                tessellator.addVertexWithUV((double)(var30 + var32 + 1.0F - var24), (double)(0.0F), (double)(var31 + 0.0F), (double)((var28 + var32 + 0.5F) * uvScale), (double)((var29 + 0.0F) * uvScale));
-                            }
-                        }
-                    }
-
-                    else if (i == 3)
-                    {
-                        if (var27 > -1)
-                        {
-                            tessellator.setNormal(0.0F, 0.0F, -1.0F);
-                            for (int var32 = 0; var32 < var22; ++var32)
-                            {
-                                tessellator.addVertexWithUV((double)(var30 + 0.0F), (double)(cloudHeight), (double)(var31 + var32 + 0.0F), (double)((var28 + 0.0F) * uvScale), (double)((var29 + var32 + 0.5F) * uvScale));
-                                tessellator.addVertexWithUV((double)(var30 + var22), (double)(cloudHeight), (double)(var31 + var32 + 0.0F), (double)((var28 + var22) * uvScale), (double)((var29 + var32 + 0.5F) * uvScale));
-                                tessellator.addVertexWithUV((double)(var30 + var22), (double)(0.0F), (double)(var31 + var32 + 0.0F), (double)((var28 + var22) * uvScale), (double)((var29 + var32 + 0.5F) * uvScale));
-                                tessellator.addVertexWithUV((double)(var30 + 0.0F), (double)(0.0F), (double)(var31 + var32 + 0.0F), (double)((var28 + 0.0F) * uvScale), (double)((var29 + var32 + 0.5F) * uvScale));
-                            }
-                        }
-                        if (var27 <= 1)
-                        {
-                            tessellator.setNormal(0.0F, 0.0F, 1.0F);
-                            for (int var32 = 0; var32 < var22; ++var32)
-                            {
-                                tessellator.addVertexWithUV((double)(var30 + 0.0F), (double)(cloudHeight), (double)(var31 + var32 + 1.0F - var24), (double)((var28 + 0.0F) * uvScale), (double)((var29 + var32 + 0.5F) * uvScale));
-                                tessellator.addVertexWithUV((double)(var30 + var22), (double)(cloudHeight), (double)(var31 + var32 + 1.0F - var24), (double)((var28 + var22) * uvScale), (double)((var29 + var32 + 0.5F) * uvScale));
-                                tessellator.addVertexWithUV((double)(var30 + var22), (double)(0.0F), (double)(var31 + var32 + 1.0F - var24), (double)((var28 + var22) * uvScale), (double)((var29 + var32 + 0.5F) * uvScale));
-                                tessellator.addVertexWithUV((double)(var30 + 0.0F), (double)(0.0F), (double)(var31 + var32 + 1.0F - var24), (double)((var28 + 0.0F) * uvScale), (double)((var29 + var32 + 0.5F) * uvScale));
-                            }
-                        }
-                    }
-                }
-            }
-            tessellator.draw();
-            RenderDragon.Api.EndList();
         }
     }
 
@@ -596,20 +609,20 @@ public class WorldRenderer : IWorldEventListener
             if (var10 > -var5 - 1.0F)
             {
                 RenderDragon.Api.Color4(var14 * 0.7F, var15 * 0.7F, var16 * 0.7F, 0.8F);
-                RenderDragon.Api.CallList((uint)(_glCloudsList + 0)); // Bottom
+                _cloudMeshes[0].Draw();
             }
 
             if (var10 <= var5 + 1.0F)
             {
                 RenderDragon.Api.Color4(var14, var15, var16, 0.8F);
-                RenderDragon.Api.CallList((uint)(_glCloudsList + 1)); // Top
+                _cloudMeshes[1].Draw();
             }
 
             RenderDragon.Api.Color4(var14 * 0.9F, var15 * 0.9F, var16 * 0.9F, 0.8F);
-            RenderDragon.Api.CallList((uint)(_glCloudsList + 2)); // Side X
+            _cloudMeshes[2].Draw();
 
             RenderDragon.Api.Color4(var14 * 0.8F, var15 * 0.8F, var16 * 0.8F, 0.8F);
-            RenderDragon.Api.CallList((uint)(_glCloudsList + 3)); // Side Z
+            _cloudMeshes[3].Draw();
 
             RenderDragon.Api.MatrixMode(GLEnum.Texture);
             RenderDragon.Api.PopMatrix();
@@ -910,6 +923,25 @@ public class WorldRenderer : IWorldEventListener
                 break;
         }
 
+    }
+
+    public void Dispose()
+    {
+        if (_disposed)
+        {
+            return;
+        }
+
+        _disposed = true;
+        ChunkRenderer?.Dispose();
+        _starMesh.Dispose();
+        _skyTopMesh.Dispose();
+        _skyBottomMesh.Dispose();
+
+        foreach (ILegacyMesh mesh in _cloudMeshes)
+        {
+            mesh.Dispose();
+        }
     }
 
     public void PlayNote(int x, int y, int z, int soundType, int pitch) { }

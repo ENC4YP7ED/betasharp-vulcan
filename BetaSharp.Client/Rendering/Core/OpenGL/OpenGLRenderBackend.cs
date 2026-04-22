@@ -21,6 +21,7 @@ public sealed class OpenGLRenderBackend : IRenderBackend
     public IShader CreateShader(string vertexShaderSource, string fragmentShaderSource) => new Shader(vertexShaderSource, fragmentShaderSource);
     public IVertexArray CreateVertexArray() => new VertexArray();
     public IVertexBuffer<T> CreateVertexBuffer<T>(Span<T> data) where T : unmanaged => new VertexBuffer<T>(data);
+    public ILegacyMesh CreateLegacyMesh(Span<Vertex> vertices, LegacyMeshLayout layout) => new LegacyMesh(vertices, layout);
 
     public void CaptureMatrices(out Matrix4X4<float> modelViewMatrix, out Matrix4X4<float> projectionMatrix)
     {

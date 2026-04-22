@@ -13,6 +13,7 @@ public interface IRenderBackend
     IShader CreateShader(string vertexShaderSource, string fragmentShaderSource);
     IVertexArray CreateVertexArray();
     IVertexBuffer<T> CreateVertexBuffer<T>(Span<T> data) where T : unmanaged;
+    ILegacyMesh CreateLegacyMesh(Span<Vertex> vertices, LegacyMeshLayout layout);
     void CaptureMatrices(out Matrix4X4<float> modelViewMatrix, out Matrix4X4<float> projectionMatrix);
 
     void UnbindFramebuffer();
