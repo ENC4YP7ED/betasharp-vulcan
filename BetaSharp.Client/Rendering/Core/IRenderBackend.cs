@@ -87,6 +87,11 @@ public interface IRenderBackend
         float translateY,
         float translateZ,
         float pixelScale);
+    void BeginHumanoidHeldItemAnchor(float translateX, float translateY, float translateZ);
+    void EndHumanoidHeldItemAnchor();
+    void ApplyHumanoidBlockHeldItemPose(float translateY, float translateZ, float uniformScale, float pitchDegrees, float yawDegrees);
+    void ApplyHumanoidHandheldItemPose(float translateY, float uniformScale, float pitchDegrees, float yawDegrees, bool rodStyle);
+    void ApplyHumanoidGenericHeldItemPose(float translateX, float translateY, float translateZ, float uniformScale, float rollDegrees, float pitchDegrees, float finalRollDegrees);
 
     void UnbindFramebuffer();
     void UnbindVertexArray();

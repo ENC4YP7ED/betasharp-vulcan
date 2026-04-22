@@ -22,39 +22,28 @@ public class UndeadEntityRenderer : LivingEntityRenderer
         ItemStack var3 = var1.getHeldItem();
         if (var3 != null)
         {
-            RenderDragon.Api.PushMatrix();
             modelBipedMain.bipedRightArm.transform(1.0F / 16.0F);
-            RenderDragon.Api.Translate(-(1.0F / 16.0F), 7.0F / 16.0F, 1.0F / 16.0F);
+            RenderDragon.BeginHumanoidHeldItemAnchor(-(1.0F / 16.0F), 7.0F / 16.0F, 1.0F / 16.0F);
             float var4;
             if (var3.ItemId < 256 && BlockRenderer.IsSideLit(Block.Blocks[var3.ItemId].getRenderType()))
             {
                 var4 = 0.5F;
-                RenderDragon.Api.Translate(0.0F, 3.0F / 16.0F, -(5.0F / 16.0F));
                 var4 *= 12.0F / 16.0F;
-                RenderDragon.Api.Rotate(20.0F, 1.0F, 0.0F, 0.0F);
-                RenderDragon.Api.Rotate(45.0F, 0.0F, 1.0F, 0.0F);
-                RenderDragon.Api.Scale(var4, -var4, var4);
+                RenderDragon.ApplyHumanoidBlockHeldItemPose(3.0F / 16.0F, -(5.0F / 16.0F), var4, 20.0F, 45.0F);
             }
             else if (Item.ITEMS[var3.ItemId].isHandheld())
             {
                 var4 = 10.0F / 16.0F;
-                RenderDragon.Api.Translate(0.0F, 3.0F / 16.0F, 0.0F);
-                RenderDragon.Api.Scale(var4, -var4, var4);
-                RenderDragon.Api.Rotate(-100.0F, 1.0F, 0.0F, 0.0F);
-                RenderDragon.Api.Rotate(45.0F, 0.0F, 1.0F, 0.0F);
+                RenderDragon.ApplyHumanoidHandheldItemPose(3.0F / 16.0F, var4, -100.0F, 45.0F, rodStyle: false);
             }
             else
             {
                 var4 = 6.0F / 16.0F;
-                RenderDragon.Api.Translate(0.25F, 3.0F / 16.0F, -(3.0F / 16.0F));
-                RenderDragon.Api.Scale(var4, var4, var4);
-                RenderDragon.Api.Rotate(60.0F, 0.0F, 0.0F, 1.0F);
-                RenderDragon.Api.Rotate(-90.0F, 1.0F, 0.0F, 0.0F);
-                RenderDragon.Api.Rotate(20.0F, 0.0F, 0.0F, 1.0F);
+                RenderDragon.ApplyHumanoidGenericHeldItemPose(0.25F, 3.0F / 16.0F, -(3.0F / 16.0F), var4, 60.0F, -90.0F, 20.0F);
             }
 
             Dispatcher.HeldItemRenderer.renderItem(var1, var3);
-            RenderDragon.Api.PopMatrix();
+            RenderDragon.EndHumanoidHeldItemAnchor();
         }
 
     }

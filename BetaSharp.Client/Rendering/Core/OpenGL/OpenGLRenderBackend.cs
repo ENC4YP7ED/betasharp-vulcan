@@ -327,6 +327,48 @@ public sealed class OpenGLRenderBackend : IRenderBackend
         Api.Scale(pixelScale, pixelScale, pixelScale);
     }
 
+    public void BeginHumanoidHeldItemAnchor(float translateX, float translateY, float translateZ)
+    {
+        Api.PushMatrix();
+        Api.Translate(translateX, translateY, translateZ);
+    }
+
+    public void EndHumanoidHeldItemAnchor()
+    {
+        Api.PopMatrix();
+    }
+
+    public void ApplyHumanoidBlockHeldItemPose(float translateY, float translateZ, float uniformScale, float pitchDegrees, float yawDegrees)
+    {
+        Api.Translate(0.0f, translateY, translateZ);
+        Api.Scale(uniformScale, -uniformScale, uniformScale);
+        Api.Rotate(pitchDegrees, 1.0f, 0.0f, 0.0f);
+        Api.Rotate(yawDegrees, 0.0f, 1.0f, 0.0f);
+    }
+
+    public void ApplyHumanoidHandheldItemPose(float translateY, float uniformScale, float pitchDegrees, float yawDegrees, bool rodStyle)
+    {
+        if (rodStyle)
+        {
+            Api.Rotate(180.0f, 0.0f, 0.0f, 1.0f);
+            Api.Translate(0.0f, -(2.0f / 16.0f), 0.0f);
+        }
+
+        Api.Translate(0.0f, translateY, 0.0f);
+        Api.Scale(uniformScale, -uniformScale, uniformScale);
+        Api.Rotate(pitchDegrees, 1.0f, 0.0f, 0.0f);
+        Api.Rotate(yawDegrees, 0.0f, 1.0f, 0.0f);
+    }
+
+    public void ApplyHumanoidGenericHeldItemPose(float translateX, float translateY, float translateZ, float uniformScale, float rollDegrees, float pitchDegrees, float finalRollDegrees)
+    {
+        Api.Translate(translateX, translateY, translateZ);
+        Api.Scale(uniformScale, uniformScale, uniformScale);
+        Api.Rotate(rollDegrees, 0.0f, 0.0f, 1.0f);
+        Api.Rotate(pitchDegrees, 1.0f, 0.0f, 0.0f);
+        Api.Rotate(finalRollDegrees, 0.0f, 0.0f, 1.0f);
+    }
+
     public void UnbindFramebuffer()
     {
         Api.BindFramebuffer(FramebufferTarget.Framebuffer, 0);

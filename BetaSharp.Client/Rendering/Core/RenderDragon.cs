@@ -190,6 +190,14 @@ public static class RenderDragon
             translateY,
             translateZ,
             pixelScale);
+    public static void BeginHumanoidHeldItemAnchor(float translateX, float translateY, float translateZ) => Backend.BeginHumanoidHeldItemAnchor(translateX, translateY, translateZ);
+    public static void EndHumanoidHeldItemAnchor() => Backend.EndHumanoidHeldItemAnchor();
+    public static void ApplyHumanoidBlockHeldItemPose(float translateY, float translateZ, float uniformScale, float pitchDegrees, float yawDegrees) =>
+        Backend.ApplyHumanoidBlockHeldItemPose(translateY, translateZ, uniformScale, pitchDegrees, yawDegrees);
+    public static void ApplyHumanoidHandheldItemPose(float translateY, float uniformScale, float pitchDegrees, float yawDegrees, bool rodStyle) =>
+        Backend.ApplyHumanoidHandheldItemPose(translateY, uniformScale, pitchDegrees, yawDegrees, rodStyle);
+    public static void ApplyHumanoidGenericHeldItemPose(float translateX, float translateY, float translateZ, float uniformScale, float rollDegrees, float pitchDegrees, float finalRollDegrees) =>
+        Backend.ApplyHumanoidGenericHeldItemPose(translateX, translateY, translateZ, uniformScale, rollDegrees, pitchDegrees, finalRollDegrees);
 
     public static void UnbindFramebuffer()
     {

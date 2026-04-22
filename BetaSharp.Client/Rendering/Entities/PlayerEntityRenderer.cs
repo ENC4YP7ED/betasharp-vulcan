@@ -210,9 +210,8 @@ public class PlayerEntityRenderer : LivingEntityRenderer
         ItemStack var21 = var1.inventory.GetItemInHand();
         if (var21 != null)
         {
-            RenderDragon.Api.PushMatrix();
             _modelBipedMain.bipedRightArm.transform(1.0F / 16.0F);
-            RenderDragon.Api.Translate(-(1.0F / 16.0F), 7.0F / 16.0F, 1.0F / 16.0F);
+            RenderDragon.BeginHumanoidHeldItemAnchor(-(1.0F / 16.0F), 7.0F / 16.0F, 1.0F / 16.0F);
             if (var1.fishHook != null)
             {
                 var21 = new ItemStack(Item.Stick);
@@ -221,38 +220,22 @@ public class PlayerEntityRenderer : LivingEntityRenderer
             if (var21.ItemId < 256 && BlockRenderer.IsSideLit(Block.Blocks[var21.ItemId].getRenderType()))
             {
                 var5 = 0.5F;
-                RenderDragon.Api.Translate(0.0F, 3.0F / 16.0F, -(5.0F / 16.0F));
                 var5 *= 12.0F / 16.0F;
-                RenderDragon.Api.Rotate(20.0F, 1.0F, 0.0F, 0.0F);
-                RenderDragon.Api.Rotate(45.0F, 0.0F, 1.0F, 0.0F);
-                RenderDragon.Api.Scale(var5, -var5, var5);
+                RenderDragon.ApplyHumanoidBlockHeldItemPose(3.0F / 16.0F, -(5.0F / 16.0F), var5, 20.0F, 45.0F);
             }
             else if (Item.ITEMS[var21.ItemId].isHandheld())
             {
                 var5 = 10.0F / 16.0F;
-                if (Item.ITEMS[var21.ItemId].isHandheldRod())
-                {
-                    RenderDragon.Api.Rotate(180.0F, 0.0F, 0.0F, 1.0F);
-                    RenderDragon.Api.Translate(0.0F, -(2.0F / 16.0F), 0.0F);
-                }
-
-                RenderDragon.Api.Translate(0.0F, 3.0F / 16.0F, 0.0F);
-                RenderDragon.Api.Scale(var5, -var5, var5);
-                RenderDragon.Api.Rotate(-100.0F, 1.0F, 0.0F, 0.0F);
-                RenderDragon.Api.Rotate(45.0F, 0.0F, 1.0F, 0.0F);
+                RenderDragon.ApplyHumanoidHandheldItemPose(3.0F / 16.0F, var5, -100.0F, 45.0F, Item.ITEMS[var21.ItemId].isHandheldRod());
             }
             else
             {
                 var5 = 6.0F / 16.0F;
-                RenderDragon.Api.Translate(0.25F, 3.0F / 16.0F, -(3.0F / 16.0F));
-                RenderDragon.Api.Scale(var5, var5, var5);
-                RenderDragon.Api.Rotate(60.0F, 0.0F, 0.0F, 1.0F);
-                RenderDragon.Api.Rotate(-90.0F, 1.0F, 0.0F, 0.0F);
-                RenderDragon.Api.Rotate(20.0F, 0.0F, 0.0F, 1.0F);
+                RenderDragon.ApplyHumanoidGenericHeldItemPose(0.25F, 3.0F / 16.0F, -(3.0F / 16.0F), var5, 60.0F, -90.0F, 20.0F);
             }
 
             Dispatcher.HeldItemRenderer.renderItem(var1, var21);
-            RenderDragon.Api.PopMatrix();
+            RenderDragon.EndHumanoidHeldItemAnchor();
         }
 
     }
