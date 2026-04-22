@@ -91,6 +91,20 @@ public sealed class OpenGLRenderBackend : IRenderBackend
         Api.LoadIdentity();
     }
 
+    public void ApplyDamageTilt(float attackedYaw, float hurtRollDegrees)
+    {
+        Api.Rotate(-attackedYaw, 0.0f, 1.0f, 0.0f);
+        Api.Rotate(-hurtRollDegrees, 0.0f, 0.0f, 1.0f);
+        Api.Rotate(attackedYaw, 0.0f, 1.0f, 0.0f);
+    }
+
+    public void ApplyViewBobbing(float translateX, float translateY, float rollDegrees, float pitchDegrees)
+    {
+        Api.Translate(translateX, translateY, 0.0f);
+        Api.Rotate(rollDegrees, 0.0f, 0.0f, 1.0f);
+        Api.Rotate(pitchDegrees, 1.0f, 0.0f, 0.0f);
+    }
+
     public void UnbindFramebuffer()
     {
         Api.BindFramebuffer(FramebufferTarget.Framebuffer, 0);

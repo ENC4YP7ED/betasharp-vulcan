@@ -73,6 +73,8 @@ public static class RenderDragon
         Backend.SetupOrthographicProjection(left, right, bottom, top, zNear, zFar, modelViewTranslateZ);
     public static void SetupPerspectiveProjection(float fovY, float aspect, float zNear, float zFar, float projectionTranslateX = 0.0f, float projectionTranslateY = 0.0f, float projectionScale = 1.0f) =>
         Backend.SetupPerspectiveProjection(fovY, aspect, zNear, zFar, projectionTranslateX, projectionTranslateY, projectionScale);
+    public static void ApplyDamageTilt(float attackedYaw, float hurtRollDegrees) => Backend.ApplyDamageTilt(attackedYaw, hurtRollDegrees);
+    public static void ApplyViewBobbing(float translateX, float translateY, float rollDegrees, float pitchDegrees) => Backend.ApplyViewBobbing(translateX, translateY, rollDegrees, pitchDegrees);
 
     public static void UnbindFramebuffer()
     {

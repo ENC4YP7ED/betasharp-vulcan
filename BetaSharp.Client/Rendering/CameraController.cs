@@ -102,10 +102,7 @@ public class CameraController
         {
             hurtTimeF /= cameraEntity.MaxHurtTime;
             hurtTimeF = MathHelper.Sin(hurtTimeF * hurtTimeF * hurtTimeF * hurtTimeF * (float)Math.PI);
-            float attackedYaw = cameraEntity.AttackedAtYaw;
-            RenderDragon.Api.Rotate(-attackedYaw, 0.0F, 1.0F, 0.0F);
-            RenderDragon.Api.Rotate(-hurtTimeF * 14.0F, 0.0F, 0.0F, 1.0F);
-            RenderDragon.Api.Rotate(attackedYaw, 0.0F, 1.0F, 0.0F);
+            RenderDragon.ApplyDamageTilt(cameraEntity.AttackedAtYaw, hurtTimeF * 14.0F);
         }
     }
 
@@ -117,11 +114,11 @@ public class CameraController
             float speed = -(player.HorizontalSpeed + speedDelta * tickDelta);
             float bobAmount = player.prevStepBobbingAmount + (player.stepBobbingAmount - player.prevStepBobbingAmount) * tickDelta;
             float pitch = player.CameraPitch + (player.Tilt - player.CameraPitch) * tickDelta;
-
-            RenderDragon.Api.Translate(MathHelper.Sin(speed * (float)Math.PI) * bobAmount * 0.5F, -Math.Abs(MathHelper.Cos(speed * (float)Math.PI) * bobAmount), 0.0F);
-            RenderDragon.Api.Rotate(MathHelper.Sin(speed * (float)Math.PI) * bobAmount * 3.0F, 0.0F, 0.0F, 1.0F);
-            RenderDragon.Api.Rotate(Math.Abs(MathHelper.Cos(speed * (float)Math.PI - 0.2F) * bobAmount) * 5.0F, 1.0F, 0.0F, 0.0F);
-            RenderDragon.Api.Rotate(pitch, 1.0F, 0.0F, 0.0F);
+            RenderDragon.ApplyViewBobbing(
+                MathHelper.Sin(speed * (float)Math.PI) * bobAmount * 0.5F,
+                -Math.Abs(MathHelper.Cos(speed * (float)Math.PI) * bobAmount),
+                MathHelper.Sin(speed * (float)Math.PI) * bobAmount * 3.0F,
+                Math.Abs(MathHelper.Cos(speed * (float)Math.PI - 0.2F) * bobAmount) * 5.0F + pitch);
         }
     }
 
