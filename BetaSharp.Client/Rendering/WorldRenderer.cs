@@ -273,7 +273,7 @@ public class WorldRenderer : IWorldEventListener
         }
     }
 
-    public int SortAndRender(EntityLiving var1, int pass, double var3, ICuller cam)
+    public int SortAndRender(EntityLiving var1, int pass, double var3, ICuller cam, Matrix4X4<float> modelViewMatrix, Matrix4X4<float> projectionMatrix)
     {
         if (_game.Options.renderDistance != _renderDistance)
         {
@@ -290,6 +290,8 @@ public class WorldRenderer : IWorldEventListener
         {
             Camera = cam,
             ViewPos = new Vector3D<double>(var33, var7, var9),
+            ModelViewMatrix = modelViewMatrix,
+            ProjectionMatrix = projectionMatrix,
             RenderDistance = _renderDistance,
             Ticks = _world.GetTime(),
             PartialTicks = (float)var3,

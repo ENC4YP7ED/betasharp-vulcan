@@ -7,6 +7,8 @@ public struct ChunkRenderParams
 {
     public ICuller Camera;
     public Vector3D<double> ViewPos;
+    public Matrix4X4<float> ModelViewMatrix;
+    public Matrix4X4<float> ProjectionMatrix;
     public int RenderDistance;
     public long Ticks;
     public float PartialTicks;

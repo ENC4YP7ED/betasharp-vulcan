@@ -73,8 +73,6 @@ public class ChunkRenderer : IChunkVisibilityVisitor
     private int _lastRenderDistance;
     private Vector3D<double> _lastViewPos;
     private int _currentIndex;
-    private Matrix4X4<float> _modelView;
-    private Matrix4X4<float> _projection;
     private int _fogMode;
     private float _fogDensity;
     private float _fogStart;
@@ -126,23 +124,7 @@ public class ChunkRenderer : IChunkVisibilityVisitor
         _chunkShader.SetUniform1("envAnim", renderParams.EnvironmentAnimation ? 1 : 0);
         _chunkShader.SetUniform1("chunkFadeEnabled", renderParams.ChunkFade ? 1 : 0);
 
-        var modelView = new Matrix4X4<float>();
-        var projection = new Matrix4X4<float>();
-
-        unsafe
-        {
-            RenderDragon.Api.GetFloat(GLEnum.ModelviewMatrix, (float*)&modelView);
-        }
-
-        unsafe
-        {
-            RenderDragon.Api.GetFloat(GLEnum.ProjectionMatrix, (float*)&projection);
-        }
-
-        _modelView = modelView;
-        _projection = projection;
-
-        _chunkShader.SetUniformMatrix4("projectionMatrix", projection);
+        _chunkShader.SetUniformMatrix4("projectionMatrix", renderParams.ProjectionMatrix);
 
         _visibleRenderers.Clear();
         _frameIndex++;
@@ -224,7 +206,7 @@ public class ChunkRenderer : IChunkVisibilityVisitor
 
             float fadeProgress = Math.Clamp(renderer.Age / SubChunkRenderer.FadeDuration, 0.0f, 1.0f);
             _chunkShader.SetUniform1("fadeProgress", fadeProgress);
-            renderer.Render(_chunkShader, 0, renderParams.ViewPos, modelView);
+            renderer.Render(_chunkShader, 0, renderParams.ViewPos, renderParams.ModelViewMatrix);
 
             if (renderer.HasTranslucentMesh)
             {
@@ -291,7 +273,7 @@ public class ChunkRenderer : IChunkVisibilityVisitor
         _chunkShader.Bind();
         _chunkShader.SetUniform1("textureSampler", 0);
 
-        _chunkShader.SetUniformMatrix4("projectionMatrix", _projection);
+        _chunkShader.SetUniformMatrix4("projectionMatrix", renderParams.ProjectionMatrix);
 
         _translucentDistanceComparer.Origin = renderParams.ViewPos;
         _translucentRenderers.Sort(_translucentDistanceComparer);
@@ -300,7 +282,7 @@ public class ChunkRenderer : IChunkVisibilityVisitor
         {
             float fadeProgress = Math.Clamp(renderer.Age / SubChunkRenderer.FadeDuration, 0.0f, 1.0f);
             _chunkShader.SetUniform1("fadeProgress", fadeProgress);
-            renderer.Render(_chunkShader, 1, renderParams.ViewPos, _modelView);
+            renderer.Render(_chunkShader, 1, renderParams.ViewPos, renderParams.ModelViewMatrix);
         }
 
         _translucentRenderers.Clear();
