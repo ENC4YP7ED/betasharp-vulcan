@@ -3,6 +3,7 @@ using Silk.NET.GLFW;
 using Silk.NET.Maths;
 using Silk.NET.OpenGL;
 using Silk.NET.Windowing;
+using BetaSharp.Client.Rendering.Core;
 
 namespace BetaSharp.Client;
 
@@ -466,9 +467,9 @@ public static unsafe class Display
     }
 
     /// <summary>
-    /// Create the OpenGL context.
+    /// Create the graphics context for the selected backend.
     /// </summary>
-    public static void create()
+    public static void create(RenderBackendKind backend)
     {
         lock (_lock)
         {
@@ -482,7 +483,7 @@ public static unsafe class Display
             options.VSync = _swapInterval > 0;
             options.IsVisible = true;
             options.Samples = MSAA_Samples;
-            options.API = new GraphicsAPI(ContextAPI.OpenGL, ContextProfile.Core, DebugMode ? ContextFlags.Debug : ContextFlags.Default, new APIVersion(4, 1));
+            options.API = CreateGraphicsApi(backend);
 
             if (_x >= 0 && _y >= 0)
                 options.Position = new Vector2D<int>(_x, _y);
@@ -501,6 +502,16 @@ public static unsafe class Display
             _window.Initialize();
         }
     }
+
+    private static GraphicsAPI CreateGraphicsApi(RenderBackendKind backend) => backend switch
+    {
+        RenderBackendKind.OpenGL => new GraphicsAPI(
+            ContextAPI.OpenGL,
+            ContextProfile.Core,
+            DebugMode ? ContextFlags.Debug : ContextFlags.Default,
+            new APIVersion(4, 1)),
+        _ => throw new NotSupportedException($"Window creation for the {backend} backend is not implemented yet."),
+    };
 
     private static void onLoad()
     {

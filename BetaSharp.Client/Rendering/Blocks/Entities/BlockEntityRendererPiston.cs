@@ -25,11 +25,11 @@ public class BlockEntityRendererPiston : BlockEntitySpecialRenderer
             Tessellator tess = Tessellator.instance;
             bindTextureByName("/terrain.png");
             Lighting.turnOff();
-            GLManager.GL.BlendFunc(GLEnum.SrcAlpha, GLEnum.OneMinusSrcAlpha);
-            GLManager.GL.Enable(GLEnum.Blend);
-            GLManager.GL.Disable(GLEnum.CullFace);
+            RenderDragon.Api.BlendFunc(GLEnum.SrcAlpha, GLEnum.OneMinusSrcAlpha);
+            RenderDragon.Api.Enable(GLEnum.Blend);
+            RenderDragon.Api.Disable(GLEnum.CullFace);
 
-            GLManager.GL.ShadeModel(GLEnum.Smooth);
+            RenderDragon.Api.ShadeModel(GLEnum.Smooth);
 
             tess.startDrawingQuads();
             tess.setTranslationD(

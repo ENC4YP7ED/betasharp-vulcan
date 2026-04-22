@@ -9,7 +9,7 @@ public class GLAllocation
     {
         lock (l)
         {
-            int var1 = (int)GLManager.GL.GenLists((uint)var0);
+            int var1 = (int)RenderDragon.Api.GenLists((uint)var0);
             displayLists.Add(var1);
             displayLists.Add(var0);
             return var1;
@@ -21,7 +21,7 @@ public class GLAllocation
         lock (l)
         {
             uint[] textureIds = new uint[var0.Length];
-            GLManager.GL.GenTextures(textureIds);
+            RenderDragon.Api.GenTextures(textureIds);
 
             int[] intIds = Array.ConvertAll(textureIds, id => (int)id);
             var0.CopyTo(intIds);
@@ -38,7 +38,7 @@ public class GLAllocation
         lock (l)
         {
             uint[] bufferIds = new uint[vertexBuffers.Length];
-            GLManager.GL.GenBuffers(bufferIds);
+            RenderDragon.Api.GenBuffers(bufferIds);
             int[] intIds = Array.ConvertAll(bufferIds, id => (int)id);
             vertexBuffers.CopyTo(intIds);
         }
@@ -51,7 +51,7 @@ public class GLAllocation
             int var1 = displayLists.IndexOf(var0);
             int list = displayLists[var1];
             int range = displayLists[var1 + 1];
-            GLManager.GL.DeleteLists((uint)list, (uint)range);
+            RenderDragon.Api.DeleteLists((uint)list, (uint)range);
             displayLists.RemoveAt(var1);
             displayLists.RemoveAt(var1);
         }
@@ -65,7 +65,7 @@ public class GLAllocation
             {
                 int list = displayLists[var0];
                 int range = displayLists[var0 + 1];
-                GLManager.GL.DeleteLists((uint)list, (uint)range);
+                RenderDragon.Api.DeleteLists((uint)list, (uint)range);
             }
 
             if (textureNames.Count > 0)
@@ -75,7 +75,7 @@ public class GLAllocation
                 {
                     textureIds[i] = (uint)textureNames[i];
                 }
-                GLManager.GL.DeleteTextures(textureIds);
+                RenderDragon.Api.DeleteTextures(textureIds);
             }
 
             displayLists.Clear();

@@ -7,7 +7,7 @@ public class VertexArray : IDisposable
 
     public VertexArray()
     {
-        id = GLManager.GL.GenVertexArray();
+        id = RenderDragon.Api.GenVertexArray();
     }
 
     public void Bind()
@@ -17,12 +17,12 @@ public class VertexArray : IDisposable
             throw new Exception("Attempted to bind invalid VertexArray");
         }
 
-        GLManager.GL.BindVertexArray(id);
+        RenderDragon.Api.BindVertexArray(id);
     }
 
     public static void Unbind()
     {
-        GLManager.GL.BindVertexArray(0);
+        RenderDragon.Api.BindVertexArray(0);
     }
 
     public void Dispose()
@@ -36,7 +36,7 @@ public class VertexArray : IDisposable
 
         if (id != 0)
         {
-            GLManager.GL.DeleteVertexArray(id);
+            RenderDragon.Api.DeleteVertexArray(id);
             id = 0;
         }
 

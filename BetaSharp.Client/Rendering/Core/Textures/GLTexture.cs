@@ -18,7 +18,7 @@ public class GLTexture : IDisposable
     public GLTexture(string source)
     {
         Source = source;
-        Id = GLManager.GL.GenTexture();
+        Id = RenderDragon.Api.GenTexture();
         s_activeTextures.Add(Id, (source, DateTime.Now));
     }
 
@@ -27,28 +27,28 @@ public class GLTexture : IDisposable
         if (Id != 0)
         {
             TextureStats.NotifyBind();
-            GLManager.GL.BindTexture(GLEnum.Texture2D, Id);
+            RenderDragon.Api.BindTexture(GLEnum.Texture2D, Id);
         }
     }
 
     public void SetFilter(TextureMinFilter min, TextureMagFilter mag)
     {
         Bind();
-        GLManager.GL.TexParameter(GLEnum.Texture2D, GLEnum.TextureMinFilter, (int)min);
-        GLManager.GL.TexParameter(GLEnum.Texture2D, GLEnum.TextureMagFilter, (int)mag);
+        RenderDragon.Api.TexParameter(GLEnum.Texture2D, GLEnum.TextureMinFilter, (int)min);
+        RenderDragon.Api.TexParameter(GLEnum.Texture2D, GLEnum.TextureMagFilter, (int)mag);
     }
 
     public void SetWrap(TextureWrapMode s, TextureWrapMode t)
     {
         Bind();
-        GLManager.GL.TexParameter(GLEnum.Texture2D, GLEnum.TextureWrapS, (int)s);
-        GLManager.GL.TexParameter(GLEnum.Texture2D, GLEnum.TextureWrapT, (int)t);
+        RenderDragon.Api.TexParameter(GLEnum.Texture2D, GLEnum.TextureWrapS, (int)s);
+        RenderDragon.Api.TexParameter(GLEnum.Texture2D, GLEnum.TextureWrapT, (int)t);
     }
 
     public void SetMaxLevel(int level)
     {
         Bind();
-        GLManager.GL.TexParameter(GLEnum.Texture2D, GLEnum.TextureMaxLevel, level);
+        RenderDragon.Api.TexParameter(GLEnum.Texture2D, GLEnum.TextureMaxLevel, level);
     }
 
     public unsafe void Upload(int width, int height, byte* ptr, int level = 0, PixelFormat format = PixelFormat.Rgba, InternalFormat internalFormat = InternalFormat.Rgba)
@@ -59,21 +59,21 @@ public class GLTexture : IDisposable
             Height = height;
         }
         Bind();
-        GLManager.GL.TexImage2D(TextureTarget.Texture2D, level, internalFormat, (uint)width, (uint)height, 0, format, PixelType.UnsignedByte, ptr);
+        RenderDragon.Api.TexImage2D(TextureTarget.Texture2D, level, internalFormat, (uint)width, (uint)height, 0, format, PixelType.UnsignedByte, ptr);
     }
 
     public unsafe void UploadSubImage(int x, int y, int width, int height, byte* ptr, int level = 0, PixelFormat format = PixelFormat.Rgba)
     {
         Bind();
-        GLManager.GL.TexSubImage2D(GLEnum.Texture2D, level, x, y, (uint)width, (uint)height, (GLEnum)format, (GLEnum)PixelType.UnsignedByte, ptr);
+        RenderDragon.Api.TexSubImage2D(GLEnum.Texture2D, level, x, y, (uint)width, (uint)height, (GLEnum)format, (GLEnum)PixelType.UnsignedByte, ptr);
     }
 
     public void SetAnisotropicFilter(float level)
     {
-        if (GLManager.GL.IsExtensionPresent("GL_EXT_texture_filter_anisotropic"))
+        if (RenderDragon.Api.IsExtensionPresent("GL_EXT_texture_filter_anisotropic"))
         {
             Bind();
-            GLManager.GL.TexParameter(GLEnum.Texture2D, (GLEnum)0x84FE, level); // GL_TEXTURE_MAX_ANISOTROPY_EXT
+            RenderDragon.Api.TexParameter(GLEnum.Texture2D, (GLEnum)0x84FE, level); // GL_TEXTURE_MAX_ANISOTROPY_EXT
         }
     }
 
@@ -83,7 +83,7 @@ public class GLTexture : IDisposable
 
         if (Id != 0)
         {
-            GLManager.GL.DeleteTexture(Id);
+            RenderDragon.Api.DeleteTexture(Id);
             s_activeTextures.Remove(Id, out _);
             Id = 0;
         }

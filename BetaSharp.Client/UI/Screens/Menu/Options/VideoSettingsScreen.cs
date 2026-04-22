@@ -30,6 +30,7 @@ public class VideoSettingsScreen(UIContext context, UIScreen? parent) : BaseOpti
 
         AddSection("Performance", [
             Options.RenderDistanceOption,
+            Options.RenderBackendOption,
             Options.FramerateLimitOption,
             Options.VSyncOption,
             Options.MsaaOption,

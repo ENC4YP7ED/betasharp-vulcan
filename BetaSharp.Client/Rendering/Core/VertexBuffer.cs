@@ -11,9 +11,9 @@ public class VertexBuffer<T> : IDisposable where T : unmanaged
 
     public unsafe VertexBuffer(Span<T> data)
     {
-        id = GLManager.GL.GenBuffer();
-        GLManager.GL.BindBuffer(GLEnum.ArrayBuffer, id);
-        GLManager.GL.BufferData<T>(GLEnum.ArrayBuffer, data, GLEnum.StaticDraw);
+        id = RenderDragon.Api.GenBuffer();
+        RenderDragon.Api.BindBuffer(GLEnum.ArrayBuffer, id);
+        RenderDragon.Api.BufferData<T>(GLEnum.ArrayBuffer, data, GLEnum.StaticDraw);
         size = data.Length * sizeof(T);
         Allocated += size;
     }
@@ -25,7 +25,7 @@ public class VertexBuffer<T> : IDisposable where T : unmanaged
             throw new Exception("Attempted to bind invalid VertexBuffer");
         }
 
-        GLManager.GL.BindBuffer(GLEnum.ArrayBuffer, id);
+        RenderDragon.Api.BindBuffer(GLEnum.ArrayBuffer, id);
     }
 
     public unsafe void BufferData(Span<T> data)
@@ -36,9 +36,9 @@ public class VertexBuffer<T> : IDisposable where T : unmanaged
         }
         else
         {
-            GLManager.GL.BindBuffer(GLEnum.ArrayBuffer, id);
-            GLManager.GL.BufferData(GLEnum.ArrayBuffer, (nuint)(data.Length * sizeof(T)), (void*)0, GLEnum.StaticDraw);
-            GLManager.GL.BufferData<T>(GLEnum.ArrayBuffer, data, GLEnum.StaticDraw);
+            RenderDragon.Api.BindBuffer(GLEnum.ArrayBuffer, id);
+            RenderDragon.Api.BufferData(GLEnum.ArrayBuffer, (nuint)(data.Length * sizeof(T)), (void*)0, GLEnum.StaticDraw);
+            RenderDragon.Api.BufferData<T>(GLEnum.ArrayBuffer, data, GLEnum.StaticDraw);
 
             Allocated -= size;
             size = data.Length * sizeof(T);
@@ -57,7 +57,7 @@ public class VertexBuffer<T> : IDisposable where T : unmanaged
 
         if (id != 0)
         {
-            GLManager.GL.DeleteBuffer(id);
+            RenderDragon.Api.DeleteBuffer(id);
             Allocated -= size;
             size = 0;
             id = 0;

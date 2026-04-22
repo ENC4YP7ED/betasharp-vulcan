@@ -132,7 +132,7 @@ public class ModelWolf : ModelBase
         if (var5.getWolfShaking())
         {
             float var7 = var5.GetBrightnessAtEyes(var4) * var5.getShadingWhileShaking(var4);
-            GLManager.GL.Color3(var7, var7, var7);
+            RenderDragon.Api.Color3(var7, var7, var7);
         }
 
     }

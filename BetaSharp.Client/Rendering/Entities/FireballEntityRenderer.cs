@@ -10,11 +10,11 @@ public class FireballEntityRenderer : EntityRenderer
 
     public void render(EntityFireball var1, double x, double y, double z, float yaw, float tickDelta)
     {
-        GLManager.GL.PushMatrix();
-        GLManager.GL.Translate((float)x, (float)y, (float)z);
-        GLManager.GL.Enable(GLEnum.RescaleNormal);
+        RenderDragon.Api.PushMatrix();
+        RenderDragon.Api.Translate((float)x, (float)y, (float)z);
+        RenderDragon.Api.Enable(GLEnum.RescaleNormal);
         float var10 = 2.0F;
-        GLManager.GL.Scale(var10 / 1.0F, var10 / 1.0F, var10 / 1.0F);
+        RenderDragon.Api.Scale(var10 / 1.0F, var10 / 1.0F, var10 / 1.0F);
         int var11 = Item.Snowball.getTextureId(0);
         loadTexture("/gui/items.png");
         Tessellator var12 = Tessellator.instance;
@@ -25,8 +25,8 @@ public class FireballEntityRenderer : EntityRenderer
         float var17 = 1.0F;
         float var18 = 0.5F;
         float var19 = 0.25F;
-        GLManager.GL.Rotate(180.0F - Dispatcher.PlayerViewY, 0.0F, 1.0F, 0.0F);
-        GLManager.GL.Rotate(-Dispatcher.PlayerViewX, 1.0F, 0.0F, 0.0F);
+        RenderDragon.Api.Rotate(180.0F - Dispatcher.PlayerViewY, 0.0F, 1.0F, 0.0F);
+        RenderDragon.Api.Rotate(-Dispatcher.PlayerViewX, 1.0F, 0.0F, 0.0F);
         var12.startDrawingQuads();
         var12.setNormal(0.0F, 1.0F, 0.0F);
         var12.addVertexWithUV((double)(0.0F - var18), (double)(0.0F - var19), 0.0D, (double)var13, (double)var16);
@@ -34,8 +34,8 @@ public class FireballEntityRenderer : EntityRenderer
         var12.addVertexWithUV((double)(var17 - var18), (double)(1.0F - var19), 0.0D, (double)var14, (double)var15);
         var12.addVertexWithUV((double)(0.0F - var18), (double)(1.0F - var19), 0.0D, (double)var13, (double)var15);
         var12.draw();
-        GLManager.GL.Disable(GLEnum.RescaleNormal);
-        GLManager.GL.PopMatrix();
+        RenderDragon.Api.Disable(GLEnum.RescaleNormal);
+        RenderDragon.Api.PopMatrix();
     }
 
     public override void Render(Entity target, double x, double y, double z, float yaw, float tickDelta)

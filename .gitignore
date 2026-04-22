@@ -12,6 +12,7 @@
 *.sln.docstates
 assets/
 b1.7.3.jar
+codex.md
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs

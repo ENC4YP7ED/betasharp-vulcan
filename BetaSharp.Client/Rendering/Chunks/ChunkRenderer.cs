@@ -103,7 +103,7 @@ public class ChunkRenderer : IChunkVisibilityVisitor
 
         _chunkShader = new(AssetManager.Instance.getAsset("shaders/chunk.vert").GetTextContent(), AssetManager.Instance.getAsset("shaders/chunk.frag").GetTextContent());
 
-        GLManager.GL.UseProgram(0);
+        RenderDragon.Api.UseProgram(0);
     }
 
     public void Render(ChunkRenderParams renderParams)
@@ -129,12 +129,12 @@ public class ChunkRenderer : IChunkVisibilityVisitor
 
         unsafe
         {
-            GLManager.GL.GetFloat(GLEnum.ModelviewMatrix, (float*)&modelView);
+            RenderDragon.Api.GetFloat(GLEnum.ModelviewMatrix, (float*)&modelView);
         }
 
         unsafe
         {
-            GLManager.GL.GetFloat(GLEnum.ProjectionMatrix, (float*)&projection);
+            RenderDragon.Api.GetFloat(GLEnum.ProjectionMatrix, (float*)&projection);
         }
 
         _modelView = modelView;
@@ -255,7 +255,7 @@ public class ChunkRenderer : IChunkVisibilityVisitor
         ProcessOneLightingMeshUpdate();
         LoadNewMeshes(renderParams.ViewPos);
 
-        GLManager.GL.UseProgram(0);
+        RenderDragon.Api.UseProgram(0);
         Core.VertexArray.Unbind();
     }
 
@@ -303,7 +303,7 @@ public class ChunkRenderer : IChunkVisibilityVisitor
 
         _translucentRenderers.Clear();
 
-        GLManager.GL.UseProgram(0);
+        RenderDragon.Api.UseProgram(0);
         Core.VertexArray.Unbind();
     }
 

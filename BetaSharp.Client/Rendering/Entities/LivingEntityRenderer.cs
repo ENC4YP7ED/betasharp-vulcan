@@ -29,8 +29,8 @@ public class LivingEntityRenderer : EntityRenderer
 
     public virtual void DoRenderLiving(EntityLiving var1, double var2, double var4, double var6, float var8, float var9)
     {
-        GLManager.GL.PushMatrix();
-        GLManager.GL.Disable(GLEnum.CullFace);
+        RenderDragon.Api.PushMatrix();
+        RenderDragon.Api.Disable(GLEnum.CullFace);
         mainModel.onGround = func_167_c(var1, var9);
         if (renderPassModel != null)
         {
@@ -52,10 +52,10 @@ public class LivingEntityRenderer : EntityRenderer
             float var13 = getAnimationProgress(var1, var9);
             RotateCorpse(var1, var13, var10, var9);
             float var14 = 1.0F / 16.0F;
-            GLManager.GL.Enable(GLEnum.RescaleNormal);
-            GLManager.GL.Scale(-1.0F, -1.0F, 1.0F);
+            RenderDragon.Api.Enable(GLEnum.RescaleNormal);
+            RenderDragon.Api.Scale(-1.0F, -1.0F, 1.0F);
             PreRenderCallback(var1, var9);
-            GLManager.GL.Translate(0.0F, -24.0F * var14 - (1 / 128f), 0.0F);
+            RenderDragon.Api.Translate(0.0F, -24.0F * var14 - (1 / 128f), 0.0F);
             float var15 = var1.LastWalkAnimationSpeed + (var1.WalkAnimationSpeed - var1.LastWalkAnimationSpeed) * var9;
             float var16 = var1.AnimationPhase - var1.WalkAnimationSpeed * (1.0F - var9);
             if (var15 > 1.0F)
@@ -64,7 +64,7 @@ public class LivingEntityRenderer : EntityRenderer
             }
 
             LoadDownloadableImageTexture((var1 as EntityPlayer)?.name, var1.GetTexture());
-            GLManager.GL.Enable(GLEnum.AlphaTest);
+            RenderDragon.Api.Enable(GLEnum.AlphaTest);
             mainModel.setLivingAnimations(var1, var16, var15, var9);
             mainModel.render(var16, var15, var13, var11 - var10, var12, var14);
 
@@ -73,8 +73,8 @@ public class LivingEntityRenderer : EntityRenderer
                 if (ShouldRenderPass(var1, var17, var9))
                 {
                     renderPassModel.render(var16, var15, var13, var11 - var10, var12, var14);
-                    GLManager.GL.Disable(GLEnum.Blend);
-                    GLManager.GL.Enable(GLEnum.AlphaTest);
+                    RenderDragon.Api.Disable(GLEnum.Blend);
+                    RenderDragon.Api.Enable(GLEnum.AlphaTest);
                 }
             }
 
@@ -83,21 +83,21 @@ public class LivingEntityRenderer : EntityRenderer
             int var18 = getColorMultiplier(var1, var25, var9);
             if ((var18 >> 24 & 255) > 0 || var1.HurtTime > 0 || var1.DeathTime > 0)
             {
-                GLManager.GL.Disable(GLEnum.Texture2D);
-                GLManager.GL.Disable(GLEnum.AlphaTest);
-                GLManager.GL.Enable(GLEnum.Blend);
-                GLManager.GL.BlendFunc(GLEnum.SrcAlpha, GLEnum.OneMinusSrcAlpha);
-                GLManager.GL.DepthFunc(GLEnum.Equal);
+                RenderDragon.Api.Disable(GLEnum.Texture2D);
+                RenderDragon.Api.Disable(GLEnum.AlphaTest);
+                RenderDragon.Api.Enable(GLEnum.Blend);
+                RenderDragon.Api.BlendFunc(GLEnum.SrcAlpha, GLEnum.OneMinusSrcAlpha);
+                RenderDragon.Api.DepthFunc(GLEnum.Equal);
                 if (var1.HurtTime > 0 || var1.DeathTime > 0)
                 {
-                    GLManager.GL.Color4(var25, 0.0F, 0.0F, 0.4F);
+                    RenderDragon.Api.Color4(var25, 0.0F, 0.0F, 0.4F);
                     mainModel.render(var16, var15, var13, var11 - var10, var12, var14);
 
                     for (int var19 = 0; var19 < 4; ++var19)
                     {
                         if (func_27005_b(var1, var19, var9))
                         {
-                            GLManager.GL.Color4(var25, 0.0F, 0.0F, 0.4F);
+                            RenderDragon.Api.Color4(var25, 0.0F, 0.0F, 0.4F);
                             renderPassModel.render(var16, var15, var13, var11 - var10, var12, var14);
                         }
                     }
@@ -109,44 +109,44 @@ public class LivingEntityRenderer : EntityRenderer
                     float var20 = (var18 >> 8 & 255) / 255.0F;
                     float var21 = (var18 & 255) / 255.0F;
                     float var22 = (var18 >> 24 & 255) / 255.0F;
-                    GLManager.GL.Color4(var26, var20, var21, var22);
+                    RenderDragon.Api.Color4(var26, var20, var21, var22);
                     mainModel.render(var16, var15, var13, var11 - var10, var12, var14);
 
                     for (int var23 = 0; var23 < 4; ++var23)
                     {
                         if (func_27005_b(var1, var23, var9))
                         {
-                            GLManager.GL.Color4(var26, var20, var21, var22);
+                            RenderDragon.Api.Color4(var26, var20, var21, var22);
                             renderPassModel.render(var16, var15, var13, var11 - var10, var12, var14);
                         }
                     }
                 }
 
-                GLManager.GL.DepthFunc(GLEnum.Lequal);
-                GLManager.GL.Disable(GLEnum.Blend);
-                GLManager.GL.Enable(GLEnum.AlphaTest);
-                GLManager.GL.Enable(GLEnum.Texture2D);
+                RenderDragon.Api.DepthFunc(GLEnum.Lequal);
+                RenderDragon.Api.Disable(GLEnum.Blend);
+                RenderDragon.Api.Enable(GLEnum.AlphaTest);
+                RenderDragon.Api.Enable(GLEnum.Texture2D);
             }
 
-            GLManager.GL.Disable(GLEnum.RescaleNormal);
+            RenderDragon.Api.Disable(GLEnum.RescaleNormal);
         }
         catch (Exception e)
         {
             _logger.LogError(e, e.Message);
         }
 
-        GLManager.GL.PopMatrix();
+        RenderDragon.Api.PopMatrix();
         PassSpecialRender(var1, var2, var4, var6);
     }
 
     protected virtual void Func_22012_b(EntityLiving var1, double var2, double var4, double var6)
     {
-        GLManager.GL.Translate((float)var2, (float)var4, (float)var6);
+        RenderDragon.Api.Translate((float)var2, (float)var4, (float)var6);
     }
 
     protected virtual void RotateCorpse(EntityLiving var1, float var2, float var3, float var4)
     {
-        GLManager.GL.Rotate(180.0F - var3, 0.0F, 1.0F, 0.0F);
+        RenderDragon.Api.Rotate(180.0F - var3, 0.0F, 1.0F, 0.0F);
         if (var1.DeathTime > 0)
         {
             float var5 = (var1.DeathTime + var4 - 1.0F) / 20.0F * 1.6F;
@@ -156,7 +156,7 @@ public class LivingEntityRenderer : EntityRenderer
                 var5 = 1.0F;
             }
 
-            GLManager.GL.Rotate(var5 * getDeathMaxRotation(var1), 0.0F, 0.0F, 1.0F);
+            RenderDragon.Api.Rotate(var5 * getDeathMaxRotation(var1), 0.0F, 0.0F, 1.0F);
         }
 
     }
@@ -216,17 +216,17 @@ public class LivingEntityRenderer : EntityRenderer
             TextRenderer var11 = TextRenderer;
             float var12 = 1.6F;
             float var13 = (float)(1.0D / 60.0D) * var12;
-            GLManager.GL.PushMatrix();
-            GLManager.GL.Translate((float)var3 + 0.0F, (float)var5 + 2.3F, (float)var7);
-            GLManager.GL.Normal3(0.0F, 1.0F, 0.0F);
-            GLManager.GL.Rotate(-Dispatcher.PlayerViewY, 0.0F, 1.0F, 0.0F);
-            GLManager.GL.Rotate(Dispatcher.PlayerViewX, 1.0F, 0.0F, 0.0F);
-            GLManager.GL.Scale(-var13, -var13, var13);
-            GLManager.GL.Disable(GLEnum.Lighting);
-            GLManager.GL.DepthMask(false);
-            GLManager.GL.Disable(GLEnum.DepthTest);
-            GLManager.GL.Enable(GLEnum.Blend);
-            GLManager.GL.BlendFunc(GLEnum.SrcAlpha, GLEnum.OneMinusSrcAlpha);
+            RenderDragon.Api.PushMatrix();
+            RenderDragon.Api.Translate((float)var3 + 0.0F, (float)var5 + 2.3F, (float)var7);
+            RenderDragon.Api.Normal3(0.0F, 1.0F, 0.0F);
+            RenderDragon.Api.Rotate(-Dispatcher.PlayerViewY, 0.0F, 1.0F, 0.0F);
+            RenderDragon.Api.Rotate(Dispatcher.PlayerViewX, 1.0F, 0.0F, 0.0F);
+            RenderDragon.Api.Scale(-var13, -var13, var13);
+            RenderDragon.Api.Disable(GLEnum.Lighting);
+            RenderDragon.Api.DepthMask(false);
+            RenderDragon.Api.Disable(GLEnum.DepthTest);
+            RenderDragon.Api.Enable(GLEnum.Blend);
+            RenderDragon.Api.BlendFunc(GLEnum.SrcAlpha, GLEnum.OneMinusSrcAlpha);
             Tessellator var14 = Tessellator.instance;
             int var15 = 0;
             if (var2.Equals("deadmau5"))
@@ -234,7 +234,7 @@ public class LivingEntityRenderer : EntityRenderer
                 var15 = -10;
             }
 
-            GLManager.GL.Disable(GLEnum.Texture2D);
+            RenderDragon.Api.Disable(GLEnum.Texture2D);
             var14.startDrawingQuads();
             int var16 = var11.GetStringWidth(var2) / 2;
             var14.setColorRGBA_F(0.0F, 0.0F, 0.0F, 0.25F);
@@ -243,15 +243,15 @@ public class LivingEntityRenderer : EntityRenderer
             var14.addVertex(var16 + 1, 8 + var15, 0.0D);
             var14.addVertex(var16 + 1, -1 + var15, 0.0D);
             var14.draw();
-            GLManager.GL.Enable(GLEnum.Texture2D);
+            RenderDragon.Api.Enable(GLEnum.Texture2D);
             var11.DrawString(var2, -var11.GetStringWidth(var2) / 2, var15, Color.WhiteAlpha20);
-            GLManager.GL.Enable(GLEnum.DepthTest);
-            GLManager.GL.DepthMask(true);
+            RenderDragon.Api.Enable(GLEnum.DepthTest);
+            RenderDragon.Api.DepthMask(true);
             var11.DrawString(var2, -var11.GetStringWidth(var2) / 2, var15, Color.WhiteAlpha20);
-            GLManager.GL.Enable(GLEnum.Lighting);
-            GLManager.GL.Disable(GLEnum.Blend);
-            GLManager.GL.Color4(1.0F, 1.0F, 1.0F, 1.0F);
-            GLManager.GL.PopMatrix();
+            RenderDragon.Api.Enable(GLEnum.Lighting);
+            RenderDragon.Api.Disable(GLEnum.Blend);
+            RenderDragon.Api.Color4(1.0F, 1.0F, 1.0F, 1.0F);
+            RenderDragon.Api.PopMatrix();
         }
     }
 

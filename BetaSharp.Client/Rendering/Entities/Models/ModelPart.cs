@@ -137,36 +137,36 @@ public class ModelPart
                 {
                     if (rotationPointX == 0.0F && rotationPointY == 0.0F && rotationPointZ == 0.0F)
                     {
-                        GLManager.GL.CallList(displayList);
+                        RenderDragon.Api.CallList(displayList);
                     }
                     else
                     {
-                        GLManager.GL.Translate(rotationPointX * var1, rotationPointY * var1, rotationPointZ * var1);
-                        GLManager.GL.CallList(displayList);
-                        GLManager.GL.Translate(-rotationPointX * var1, -rotationPointY * var1, -rotationPointZ * var1);
+                        RenderDragon.Api.Translate(rotationPointX * var1, rotationPointY * var1, rotationPointZ * var1);
+                        RenderDragon.Api.CallList(displayList);
+                        RenderDragon.Api.Translate(-rotationPointX * var1, -rotationPointY * var1, -rotationPointZ * var1);
                     }
                 }
                 else
                 {
-                    GLManager.GL.PushMatrix();
-                    GLManager.GL.Translate(rotationPointX * var1, rotationPointY * var1, rotationPointZ * var1);
+                    RenderDragon.Api.PushMatrix();
+                    RenderDragon.Api.Translate(rotationPointX * var1, rotationPointY * var1, rotationPointZ * var1);
                     if (rotateAngleZ != 0.0F)
                     {
-                        GLManager.GL.Rotate(rotateAngleZ * (180.0F / (float)Math.PI), 0.0F, 0.0F, 1.0F);
+                        RenderDragon.Api.Rotate(rotateAngleZ * (180.0F / (float)Math.PI), 0.0F, 0.0F, 1.0F);
                     }
 
                     if (rotateAngleY != 0.0F)
                     {
-                        GLManager.GL.Rotate(rotateAngleY * (180.0F / (float)Math.PI), 0.0F, 1.0F, 0.0F);
+                        RenderDragon.Api.Rotate(rotateAngleY * (180.0F / (float)Math.PI), 0.0F, 1.0F, 0.0F);
                     }
 
                     if (rotateAngleX != 0.0F)
                     {
-                        GLManager.GL.Rotate(rotateAngleX * (180.0F / (float)Math.PI), 1.0F, 0.0F, 0.0F);
+                        RenderDragon.Api.Rotate(rotateAngleX * (180.0F / (float)Math.PI), 1.0F, 0.0F, 0.0F);
                     }
 
-                    GLManager.GL.CallList(displayList);
-                    GLManager.GL.PopMatrix();
+                    RenderDragon.Api.CallList(displayList);
+                    RenderDragon.Api.PopMatrix();
                 }
             }
         }
@@ -183,25 +183,25 @@ public class ModelPart
                     compileDisplayList(var1);
                 }
 
-                GLManager.GL.PushMatrix();
-                GLManager.GL.Translate(rotationPointX * var1, rotationPointY * var1, rotationPointZ * var1);
+                RenderDragon.Api.PushMatrix();
+                RenderDragon.Api.Translate(rotationPointX * var1, rotationPointY * var1, rotationPointZ * var1);
                 if (rotateAngleY != 0.0F)
                 {
-                    GLManager.GL.Rotate(rotateAngleY * (180.0F / (float)Math.PI), 0.0F, 1.0F, 0.0F);
+                    RenderDragon.Api.Rotate(rotateAngleY * (180.0F / (float)Math.PI), 0.0F, 1.0F, 0.0F);
                 }
 
                 if (rotateAngleX != 0.0F)
                 {
-                    GLManager.GL.Rotate(rotateAngleX * (180.0F / (float)Math.PI), 1.0F, 0.0F, 0.0F);
+                    RenderDragon.Api.Rotate(rotateAngleX * (180.0F / (float)Math.PI), 1.0F, 0.0F, 0.0F);
                 }
 
                 if (rotateAngleZ != 0.0F)
                 {
-                    GLManager.GL.Rotate(rotateAngleZ * (180.0F / (float)Math.PI), 0.0F, 0.0F, 1.0F);
+                    RenderDragon.Api.Rotate(rotateAngleZ * (180.0F / (float)Math.PI), 0.0F, 0.0F, 1.0F);
                 }
 
-                GLManager.GL.CallList(displayList);
-                GLManager.GL.PopMatrix();
+                RenderDragon.Api.CallList(displayList);
+                RenderDragon.Api.PopMatrix();
             }
         }
     }
@@ -221,25 +221,25 @@ public class ModelPart
                 {
                     if (rotationPointX != 0.0F || rotationPointY != 0.0F || rotationPointZ != 0.0F)
                     {
-                        GLManager.GL.Translate(rotationPointX * var1, rotationPointY * var1, rotationPointZ * var1);
+                        RenderDragon.Api.Translate(rotationPointX * var1, rotationPointY * var1, rotationPointZ * var1);
                     }
                 }
                 else
                 {
-                    GLManager.GL.Translate(rotationPointX * var1, rotationPointY * var1, rotationPointZ * var1);
+                    RenderDragon.Api.Translate(rotationPointX * var1, rotationPointY * var1, rotationPointZ * var1);
                     if (rotateAngleZ != 0.0F)
                     {
-                        GLManager.GL.Rotate(rotateAngleZ * (180.0F / (float)Math.PI), 0.0F, 0.0F, 1.0F);
+                        RenderDragon.Api.Rotate(rotateAngleZ * (180.0F / (float)Math.PI), 0.0F, 0.0F, 1.0F);
                     }
 
                     if (rotateAngleY != 0.0F)
                     {
-                        GLManager.GL.Rotate(rotateAngleY * (180.0F / (float)Math.PI), 0.0F, 1.0F, 0.0F);
+                        RenderDragon.Api.Rotate(rotateAngleY * (180.0F / (float)Math.PI), 0.0F, 1.0F, 0.0F);
                     }
 
                     if (rotateAngleX != 0.0F)
                     {
-                        GLManager.GL.Rotate(rotateAngleX * (180.0F / (float)Math.PI), 1.0F, 0.0F, 0.0F);
+                        RenderDragon.Api.Rotate(rotateAngleX * (180.0F / (float)Math.PI), 1.0F, 0.0F, 0.0F);
                     }
                 }
             }
@@ -249,7 +249,7 @@ public class ModelPart
     private void compileDisplayList(float scale)
     {
         displayList = (uint)GLAllocation.generateDisplayLists(1);
-        GLManager.GL.NewList(displayList, GLEnum.Compile);
+        RenderDragon.Api.NewList(displayList, GLEnum.Compile);
         Tessellator tessellator = Tessellator.instance;
 
         for (int faceIndex = 0; faceIndex < faces.Length; ++faceIndex)
@@ -257,7 +257,7 @@ public class ModelPart
             faces[faceIndex].draw(tessellator, scale);
         }
 
-        GLManager.GL.EndList();
+        RenderDragon.Api.EndList();
         compiled = true;
     }
 }

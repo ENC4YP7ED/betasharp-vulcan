@@ -4,6 +4,8 @@ using Silk.NET.OpenGL;
 using Framebuffer = BetaSharp.Client.Rendering.Core.Framebuffer;
 using GLEnum = BetaSharp.Client.Rendering.Core.OpenGL.GLEnum;
 using Shader = BetaSharp.Client.Rendering.Core.Shader;
+using VertexArray = BetaSharp.Client.Rendering.Core.VertexArray;
+using VertexBuffer = BetaSharp.Client.Rendering.Core.VertexBuffer<float>;
 
 namespace BetaSharp.Client.Rendering;
 
@@ -11,16 +13,16 @@ public class FramebufferManager
 {
     private readonly Framebuffer _mainFbo;
     private readonly Shader _gammaShader;
-    private readonly uint _vao;
-    private readonly uint _vbo;
+    private readonly VertexArray _fullscreenQuadVao;
+    private readonly VertexBuffer _fullscreenQuadVbo;
     private readonly GameOptions _options;
 
     public FramebufferManager(int w, int h, GameOptions options)
     {
         _options = options;
-        _mainFbo = new Framebuffer(w, h);
+        _mainFbo = RenderDragon.CreateFramebuffer(w, h);
 
-        _gammaShader = new Shader(
+        _gammaShader = RenderDragon.CreateShader(
             @"#version 330 core
                 layout (location = 0) in vec2 aPos;
                 layout (location = 1) in vec2 aTexCoords;
@@ -58,20 +60,12 @@ public class FramebufferManager
              1.0f,  1.0f,  1.0f, 1.0f
         ];
 
-        IGL gl = GLManager.GL;
-        _vao = gl.GenVertexArray();
-        _vbo = gl.GenBuffer();
+        IGL gl = RenderDragon.Api;
+        _fullscreenQuadVao = RenderDragon.CreateVertexArray();
+        _fullscreenQuadVbo = RenderDragon.CreateVertexBuffer<float>(quadVertices);
 
-        gl.BindVertexArray(_vao);
-        gl.BindBuffer(GLEnum.ArrayBuffer, _vbo);
-
-        unsafe
-        {
-            fixed (float* ptr = quadVertices)
-            {
-                gl.BufferData(GLEnum.ArrayBuffer, (nuint)(quadVertices.Length * sizeof(float)), ptr, GLEnum.StaticDraw);
-            }
-        }
+        _fullscreenQuadVao.Bind();
+        _fullscreenQuadVbo.Bind();
 
         gl.EnableVertexAttribArray(0);
         unsafe { gl.VertexAttribPointer(0, 2, GLEnum.Float, false, 4 * sizeof(float), (void*)0); }
@@ -97,15 +91,15 @@ public class FramebufferManager
     public void Begin()
     {
         _mainFbo.Bind();
-        GLManager.GL.Viewport(0, 0, (uint)_mainFbo.Width, (uint)_mainFbo.Height);
-        GLManager.GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+        RenderDragon.Api.Viewport(0, 0, (uint)_mainFbo.Width, (uint)_mainFbo.Height);
+        RenderDragon.Api.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
     }
 
     public void End()
     {
         Framebuffer.Unbind();
 
-        IGL gl = GLManager.GL;
+        IGL gl = RenderDragon.Api;
         gl.Viewport(0, 0, (uint)Display.getFramebufferWidth(), (uint)Display.getFramebufferHeight());
 
         gl.Disable(GLEnum.DepthTest);
@@ -125,7 +119,7 @@ public class FramebufferManager
             gl.ActiveTexture(GLEnum.Texture0);
             gl.BindTexture(GLEnum.Texture2D, _mainFbo.TextureId);
 
-            gl.BindVertexArray(_vao);
+            _fullscreenQuadVao.Bind();
             gl.DrawArrays(GLEnum.Triangles, 0, 6);
             gl.BindVertexArray(0);
             gl.UseProgram(0);

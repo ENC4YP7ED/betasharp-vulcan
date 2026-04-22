@@ -20,17 +20,17 @@ public class SlimeEntityRenderer : LivingEntityRenderer
         if (var2 == 0)
         {
             setRenderPassModel(scaleAmount);
-            //GLManager.GL.Enable(GLEnum.Normalize);
-            GLManager.GL.Enable(GLEnum.Blend);
-            GLManager.GL.BlendFunc(GLEnum.SrcAlpha, GLEnum.OneMinusSrcAlpha);
+            //RenderDragon.Api.Enable(GLEnum.Normalize);
+            RenderDragon.Api.Enable(GLEnum.Blend);
+            RenderDragon.Api.BlendFunc(GLEnum.SrcAlpha, GLEnum.OneMinusSrcAlpha);
             return true;
         }
         else
         {
             if (var2 == 1)
             {
-                GLManager.GL.Disable(GLEnum.Blend);
-                GLManager.GL.Color4(1.0F, 1.0F, 1.0F, 1.0F);
+                RenderDragon.Api.Disable(GLEnum.Blend);
+                RenderDragon.Api.Color4(1.0F, 1.0F, 1.0F, 1.0F);
             }
 
             return false;
@@ -43,7 +43,7 @@ public class SlimeEntityRenderer : LivingEntityRenderer
         float var4 = (var1.prevSquishAmount + (var1.squishAmount - var1.prevSquishAmount) * var2) / (var3 * 0.5F + 1.0F);
         float var5 = 1.0F / (var4 + 1.0F);
         float var6 = var3;
-        GLManager.GL.Scale(var5 * var6, 1.0F / var5 * var6, var5 * var6);
+        RenderDragon.Api.Scale(var5 * var6, 1.0F / var5 * var6, var5 * var6);
     }
 
     protected override void PreRenderCallback(EntityLiving var1, float var2)

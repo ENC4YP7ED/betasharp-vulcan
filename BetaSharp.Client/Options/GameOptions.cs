@@ -1,4 +1,5 @@
 using BetaSharp.Client.Input;
+using BetaSharp.Client.Rendering.Core;
 using BetaSharp.Client.UI;
 using Microsoft.Extensions.Logging;
 using Silk.NET.GLFW;
@@ -29,6 +30,7 @@ public class GameOptions
 
     private static readonly string[] AnisoLabels = ["options.off", "2x", "4x", "8x", "16x"];
     private static readonly string[] MSAALabels = ["options.off", "2x", "4x", "8x"];
+    private static readonly string[] RenderBackendLabels = ["Auto", "Prefer OpenGL", "Prefer Vulkan"];
 
     public static float MaxAnisotropy = 1.0f;
 
@@ -58,6 +60,7 @@ public class GameOptions
     public CycleOption GuiScaleOption { get; private set; }
     public CycleOption AnisotropicOption { get; private set; }
     public CycleOption MsaaOption { get; private set; }
+    public CycleOption RenderBackendOption { get; private set; }
     public BoolOption ShowWTHITOption { get; private set; }
     public BoolOption ShowCoordinatesOption { get; private set; }
 
@@ -68,7 +71,7 @@ public class GameOptions
     public GameOption[] VideoScreenOptions =>
     [
         RenderDistanceOption, FramerateLimitOption, VSyncOption,
-        ViewBobbingOption, AnisotropicOption,
+        RenderBackendOption, ViewBobbingOption, AnisotropicOption,
         MipmapsOption, MsaaOption, EnvironmentAnimationOption, ChunkFadeOption,
         AlternateBlocksOption, ShowWTHITOption
     ];
@@ -107,6 +110,7 @@ public class GameOptions
     public int AnisotropicLevel => AnisotropicOption.Value;
     public int MSAALevel => MsaaOption.Value;
     public int INITIAL_MSAA;
+    public int INITIAL_RENDER_BACKEND;
     public bool ShowWTHIT => ShowWTHITOption.Value;
     public bool ShowCoordinates => ShowCoordinatesOption.Value;
     public bool UseMipmaps => MipmapsOption.Value;
@@ -114,6 +118,7 @@ public class GameOptions
     public bool ChunkFade => ChunkFadeOption.Value;
     public bool AlternateBlocksEnabled => AlternateBlocksOption.Value;
     public bool MenuMusic => MenuMusicOption.Value;
+    public RenderBackendPreference RenderBackendPreference => (RenderBackendPreference)RenderBackendOption.Value;
 
 
     public string Skin = "Default";
@@ -191,6 +196,7 @@ public class GameOptions
 
         LoadOptions();
         INITIAL_MSAA = MSAALevel;
+        INITIAL_RENDER_BACKEND = RenderBackendOption.Value;
     }
 
     public GameOptions()
@@ -322,6 +328,16 @@ public class GameOptions
                 return result;
             }
         };
+        RenderBackendOption = new CycleOption("Renderer", "renderBackend", RenderBackendLabels)
+        {
+            LabelOverride = "Renderer",
+            Formatter = (v, _) =>
+            {
+                string result = RenderBackendLabels[v];
+                if (v != INITIAL_RENDER_BACKEND) result += " (Restart required)";
+                return result;
+            }
+        };
 
         _allOptions = [];
         foreach (GameOption option in GetAllOptions())
@@ -353,6 +369,7 @@ public class GameOptions
         yield return GuiScaleOption;
         yield return AnisotropicOption;
         yield return MsaaOption;
+        yield return RenderBackendOption;
         yield return ShowWTHITOption;
         yield return ShowCoordinatesOption;
     }

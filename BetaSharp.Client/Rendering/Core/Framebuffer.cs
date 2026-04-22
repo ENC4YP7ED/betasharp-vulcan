@@ -24,7 +24,7 @@ public class Framebuffer : IDisposable
         Width = width;
         Height = height;
 
-        IGL gl = GLManager.GL;
+        IGL gl = RenderDragon.Api;
 
         FboId = gl.GenFramebuffer();
         gl.BindFramebuffer(FramebufferTarget.Framebuffer, FboId);
@@ -59,12 +59,12 @@ public class Framebuffer : IDisposable
 
     public void Bind()
     {
-        GLManager.GL.BindFramebuffer(FramebufferTarget.Framebuffer, FboId);
+        RenderDragon.Api.BindFramebuffer(FramebufferTarget.Framebuffer, FboId);
     }
 
     public static void Unbind()
     {
-        GLManager.GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+        RenderDragon.Api.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
     }
 
     public void Resize(int width, int height)
@@ -80,17 +80,17 @@ public class Framebuffer : IDisposable
         GC.SuppressFinalize(this);
         if (FboId != 0)
         {
-            GLManager.GL.DeleteFramebuffer(FboId);
+            RenderDragon.Api.DeleteFramebuffer(FboId);
             FboId = 0;
         }
         if (TextureId != 0)
         {
-            GLManager.GL.DeleteTexture(TextureId);
+            RenderDragon.Api.DeleteTexture(TextureId);
             TextureId = 0;
         }
         if (RenderBufferId != 0)
         {
-            GLManager.GL.DeleteRenderbuffer(RenderBufferId);
+            RenderDragon.Api.DeleteRenderbuffer(RenderBufferId);
             RenderBufferId = 0;
         }
     }

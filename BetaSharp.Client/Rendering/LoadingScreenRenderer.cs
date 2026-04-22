@@ -37,13 +37,13 @@ public class LoadingScreenRenderer(BetaSharp game) : LoadingDisplay
             _titleText = message;
             ScaledResolution resolution = new(game.Options, game.DisplayWidth, game.DisplayHeight);
 
-            GLManager.GL.Clear(ClearBufferMask.DepthBufferBit);
-            GLManager.GL.MatrixMode(GLEnum.Projection);
-            GLManager.GL.LoadIdentity();
-            GLManager.GL.Ortho(0.0, resolution.ScaledWidth, resolution.ScaledHeight, 0.0, 100.0, 300.0);
-            GLManager.GL.MatrixMode(GLEnum.Modelview);
-            GLManager.GL.LoadIdentity();
-            GLManager.GL.Translate(0.0f, 0.0f, -200.0f);
+            RenderDragon.Api.Clear(ClearBufferMask.DepthBufferBit);
+            RenderDragon.Api.MatrixMode(GLEnum.Projection);
+            RenderDragon.Api.LoadIdentity();
+            RenderDragon.Api.Ortho(0.0, resolution.ScaledWidth, resolution.ScaledHeight, 0.0, 100.0, 300.0);
+            RenderDragon.Api.MatrixMode(GLEnum.Modelview);
+            RenderDragon.Api.LoadIdentity();
+            RenderDragon.Api.Translate(0.0f, 0.0f, -200.0f);
         }
     }
 
@@ -80,14 +80,14 @@ public class LoadingScreenRenderer(BetaSharp game) : LoadingDisplay
         int width = resolution.ScaledWidth;
         int height = resolution.ScaledHeight;
 
-        GLManager.GL.Clear(ClearBufferMask.DepthBufferBit);
-        GLManager.GL.MatrixMode(GLEnum.Projection);
-        GLManager.GL.LoadIdentity();
-        GLManager.GL.Ortho(0.0, width, height, 0.0, 100.0, 300.0);
-        GLManager.GL.MatrixMode(GLEnum.Modelview);
-        GLManager.GL.LoadIdentity();
-        GLManager.GL.Translate(0.0f, 0.0f, -200.0f);
-        GLManager.GL.Clear(ClearBufferMask.DepthBufferBit | ClearBufferMask.ColorBufferBit);
+        RenderDragon.Api.Clear(ClearBufferMask.DepthBufferBit);
+        RenderDragon.Api.MatrixMode(GLEnum.Projection);
+        RenderDragon.Api.LoadIdentity();
+        RenderDragon.Api.Ortho(0.0, width, height, 0.0, 100.0, 300.0);
+        RenderDragon.Api.MatrixMode(GLEnum.Modelview);
+        RenderDragon.Api.LoadIdentity();
+        RenderDragon.Api.Translate(0.0f, 0.0f, -200.0f);
+        RenderDragon.Api.Clear(ClearBufferMask.DepthBufferBit | ClearBufferMask.ColorBufferBit);
 
         Tessellator tessellator = Tessellator.instance;
         TextureHandle backgroundHandle = game.TextureManager.GetTextureId("/gui/background.png");
@@ -109,7 +109,7 @@ public class LoadingScreenRenderer(BetaSharp game) : LoadingDisplay
             int x = width / 2 - progressBarWidth / 2;
             int y = height / 2 + 16;
 
-            GLManager.GL.Disable(GLEnum.Texture2D);
+            RenderDragon.Api.Disable(GLEnum.Texture2D);
             tessellator.startDrawingQuads();
             tessellator.setColorOpaque_I(0x808080);
             tessellator.addVertex(x, y, 0.0);
@@ -123,7 +123,7 @@ public class LoadingScreenRenderer(BetaSharp game) : LoadingDisplay
             tessellator.addVertex(x + progress, y + progressBarHeight, 0.0);
             tessellator.addVertex(x + progress, y, 0.0);
             tessellator.draw();
-            GLManager.GL.Enable(GLEnum.Texture2D);
+            RenderDragon.Api.Enable(GLEnum.Texture2D);
         }
 
         int titleX = (width - game.TextRenderer.GetStringWidth(_titleText)) / 2;

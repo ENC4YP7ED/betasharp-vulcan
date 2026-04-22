@@ -62,24 +62,24 @@ public class MapItemRenderer
         if (_textureId.Texture != null) textureManager.Bind(colors, 128, 128, _textureId.Texture);
         Tessellator tess = Tessellator.instance;
         _textureId.Bind();
-        GLManager.GL.Enable(GLEnum.Blend);
-        GLManager.GL.Disable(GLEnum.AlphaTest);
+        RenderDragon.Api.Enable(GLEnum.Blend);
+        RenderDragon.Api.Disable(GLEnum.AlphaTest);
         tess.startDrawingQuads();
         tess.addVertexWithUV(0, 128, -0.01F, 0.0D, 1.0D);
         tess.addVertexWithUV(128, 128, -0.01F, 1.0D, 1.0D);
         tess.addVertexWithUV(128, 0, -0.01F, 1.0D, 0.0D);
         tess.addVertexWithUV(0, 0, -0.01F, 0.0D, 0.0D);
         tess.draw();
-        GLManager.GL.Enable(GLEnum.AlphaTest);
-        GLManager.GL.Disable(GLEnum.Blend);
+        RenderDragon.Api.Enable(GLEnum.AlphaTest);
+        RenderDragon.Api.Disable(GLEnum.Blend);
         textureManager.BindTexture(textureManager.GetTextureId("/misc/mapicons.png"));
         foreach (var icon in mapState.Icons)
         {
-            GLManager.GL.PushMatrix();
-            GLManager.GL.Translate((sbyte)icon.X / 2.0F + 64.0F, (sbyte)icon.Z / 2.0F + 64.0F, -0.02F);
-            GLManager.GL.Rotate((sbyte)icon.Rotation * 360 / 16.0F, 0.0F, 0.0F, 1.0F);
-            GLManager.GL.Scale(4.0F, 4.0F, 3.0F);
-            GLManager.GL.Translate(-(2.0F / 16.0F), 2.0F / 16.0F, 0.0F);
+            RenderDragon.Api.PushMatrix();
+            RenderDragon.Api.Translate((sbyte)icon.X / 2.0F + 64.0F, (sbyte)icon.Z / 2.0F + 64.0F, -0.02F);
+            RenderDragon.Api.Rotate((sbyte)icon.Rotation * 360 / 16.0F, 0.0F, 0.0F, 1.0F);
+            RenderDragon.Api.Scale(4.0F, 4.0F, 3.0F);
+            RenderDragon.Api.Translate(-(2.0F / 16.0F), 2.0F / 16.0F, 0.0F);
             float uMin = (icon.Type % 4 + 0) / 4.0F;
             float vMin = (icon.Type / 4 + 0) / 4.0F;
             float uMax = (icon.Type % 4 + 1) / 4.0F;
@@ -90,13 +90,13 @@ public class MapItemRenderer
             tess.addVertexWithUV(1, -1, 0, uMax, vMax);
             tess.addVertexWithUV(-1, -1, 0, uMin, vMax);
             tess.draw();
-            GLManager.GL.PopMatrix();
+            RenderDragon.Api.PopMatrix();
         }
 
-        GLManager.GL.PushMatrix();
-        GLManager.GL.Translate(0.0F, 0.0F, -0.04F);
-        GLManager.GL.Scale(1.0F, 1.0F, 1.0F);
+        RenderDragon.Api.PushMatrix();
+        RenderDragon.Api.Translate(0.0F, 0.0F, -0.04F);
+        RenderDragon.Api.Scale(1.0F, 1.0F, 1.0F);
         _textRenderer.DrawString(mapState.Id, 0, 0, Color.White);
-        GLManager.GL.PopMatrix();
+        RenderDragon.Api.PopMatrix();
     }
 }

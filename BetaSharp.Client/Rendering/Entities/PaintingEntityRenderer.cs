@@ -14,21 +14,21 @@ public class PaintingEntityRenderer : EntityRenderer
 
     private void RenderPainting(EntityPainting painting, double x, double y, double z, float yaw)
     {
-        GLManager.GL.PushMatrix();
-        GLManager.GL.Translate((float)x, (float)y, (float)z);
-        GLManager.GL.Rotate(yaw, 0.0F, 1.0F, 0.0F);
-        GLManager.GL.Enable(GLEnum.RescaleNormal);
+        RenderDragon.Api.PushMatrix();
+        RenderDragon.Api.Translate((float)x, (float)y, (float)z);
+        RenderDragon.Api.Rotate(yaw, 0.0F, 1.0F, 0.0F);
+        RenderDragon.Api.Enable(GLEnum.RescaleNormal);
 
         loadTexture("/art/kz.png");
 
         EnumArt art = painting.Art;
         float pixelScale = 1.0F / 16.0F;
-        GLManager.GL.Scale(pixelScale, pixelScale, pixelScale);
+        RenderDragon.Api.Scale(pixelScale, pixelScale, pixelScale);
 
         RenderPaintingQuads(painting, art.SizeX, art.SizeY, art.OffsetX, art.OffsetY);
 
-        GLManager.GL.Disable(GLEnum.RescaleNormal);
-        GLManager.GL.PopMatrix();
+        RenderDragon.Api.Disable(GLEnum.RescaleNormal);
+        RenderDragon.Api.PopMatrix();
     }
 
     private void RenderPaintingQuads(EntityPainting painting, int width, int height, int textureX, int textureY)
@@ -122,7 +122,7 @@ public class PaintingEntityRenderer : EntityRenderer
         }
 
         float light = Dispatcher.World.GetLuminance(checkX, checkY, checkZ);
-        GLManager.GL.Color3(light, light, light);
+        RenderDragon.Api.Color3(light, light, light);
     }
 
 

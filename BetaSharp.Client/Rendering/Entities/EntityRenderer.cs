@@ -45,7 +45,7 @@ public abstract class EntityRenderer
 
     private void RenderOnFire(Entity ent, Vec3D pos, float tickDelta)
     {
-        GLManager.GL.Disable(GLEnum.Lighting);
+        RenderDragon.Api.Disable(GLEnum.Lighting);
 
         int textureId = Block.Fire.TextureId;
         int texX = (textureId & 15) << 4;
@@ -56,11 +56,11 @@ public abstract class EntityRenderer
         float minV;
         float maxV;
 
-        GLManager.GL.PushMatrix();
-        GLManager.GL.Translate((float)pos.x, (float)pos.y, (float)pos.z);
+        RenderDragon.Api.PushMatrix();
+        RenderDragon.Api.Translate((float)pos.x, (float)pos.y, (float)pos.z);
 
         float scale = ent.Width * 1.4F;
-        GLManager.GL.Scale(scale, scale, scale);
+        RenderDragon.Api.Scale(scale, scale, scale);
 
         loadTexture("/terrain.png");
         Tessellator tess = Tessellator.instance;
@@ -70,9 +70,9 @@ public abstract class EntityRenderer
         float heightRatio = ent.Height / scale;
         float yOffset = (float)(ent.Y - ent.BoundingBox.MinY);
 
-        GLManager.GL.Rotate(-Dispatcher.PlayerViewY, 0.0F, 1.0F, 0.0F);
-        GLManager.GL.Translate(0.0F, 0.0F, -0.3F + (int)heightRatio * 0.02F);
-        GLManager.GL.Color4(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderDragon.Api.Rotate(-Dispatcher.PlayerViewY, 0.0F, 1.0F, 0.0F);
+        RenderDragon.Api.Translate(0.0F, 0.0F, -0.3F + (int)heightRatio * 0.02F);
+        RenderDragon.Api.Color4(1.0F, 1.0F, 1.0F, 1.0F);
 
         float zOffset = 0.0F;
         int pass = 0;
@@ -114,19 +114,19 @@ public abstract class EntityRenderer
         }
 
         tess.draw();
-        GLManager.GL.PopMatrix();
-        GLManager.GL.Enable(GLEnum.Lighting);
+        RenderDragon.Api.PopMatrix();
+        RenderDragon.Api.Enable(GLEnum.Lighting);
     }
 
     private void RenderShadow(Entity target, Vec3D pos, float shadowiness, float tickDelta)
     {
-        GLManager.GL.Enable(GLEnum.Blend);
-        GLManager.GL.BlendFunc(GLEnum.SrcAlpha, GLEnum.OneMinusSrcAlpha);
+        RenderDragon.Api.Enable(GLEnum.Blend);
+        RenderDragon.Api.BlendFunc(GLEnum.SrcAlpha, GLEnum.OneMinusSrcAlpha);
 
         TextureManager textureManager = Dispatcher.TextureManager;
         textureManager.BindTexture(textureManager.GetTextureId("%clamp%/misc/shadow.png"));
 
-        GLManager.GL.DepthMask(false);
+        RenderDragon.Api.DepthMask(false);
         float radius = ShadowRadius;
 
         double targetX = target.LastTickX + (target.X - target.LastTickX) * tickDelta;
@@ -170,9 +170,9 @@ public abstract class EntityRenderer
         }
 
         tess.draw();
-        GLManager.GL.Color4(1.0F, 1.0F, 1.0F, 1.0F);
-        GLManager.GL.Disable(GLEnum.Blend);
-        GLManager.GL.DepthMask(true);
+        RenderDragon.Api.Color4(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderDragon.Api.Disable(GLEnum.Blend);
+        RenderDragon.Api.DepthMask(true);
     }
 
     private void renderShadowOnBlock(Block block, Vec3D pos, int blockX, int blockY, int blockZ, float shadowiness, float radius, Vec3D offset)
@@ -208,9 +208,9 @@ public abstract class EntityRenderer
 
     public static void renderShape(Box aabb, Vec3D pos)
     {
-        GLManager.GL.Disable(GLEnum.Texture2D);
+        RenderDragon.Api.Disable(GLEnum.Texture2D);
         Tessellator tess = Tessellator.instance;
-        GLManager.GL.Color4(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderDragon.Api.Color4(1.0F, 1.0F, 1.0F, 1.0F);
 
         tess.startDrawingQuads();
         tess.setTranslationD(pos.x, pos.y, pos.z);
@@ -254,7 +254,7 @@ public abstract class EntityRenderer
 
         tess.setTranslationD(0.0D, 0.0D, 0.0D);
         tess.draw();
-        GLManager.GL.Enable(GLEnum.Texture2D);
+        RenderDragon.Api.Enable(GLEnum.Texture2D);
     }
 
     public static void renderShapeFlat(Box aabb)
@@ -318,11 +318,11 @@ public abstract class EntityRenderer
     {
         if (!Dispatcher.Options.ShowDebugInfo) return;
 
-        GLManager.GL.Disable(GLEnum.Lighting);
-        GLManager.GL.Disable(GLEnum.Texture2D);
-        GLManager.GL.PushMatrix();
-        GLManager.GL.Translate((float)pos.x, (float)pos.y, (float)pos.z);
-        GLManager.GL.Color4(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderDragon.Api.Disable(GLEnum.Lighting);
+        RenderDragon.Api.Disable(GLEnum.Texture2D);
+        RenderDragon.Api.PushMatrix();
+        RenderDragon.Api.Translate((float)pos.x, (float)pos.y, (float)pos.z);
+        RenderDragon.Api.Color4(1.0F, 1.0F, 1.0F, 1.0F);
 
         Box bb = target.BoundingBox;
         double minX = bb.MinX - target.X;
@@ -363,8 +363,8 @@ public abstract class EntityRenderer
         tess.addVertex(minX, maxY, maxZ);
 
         tess.draw();
-        GLManager.GL.PopMatrix();
-        GLManager.GL.Enable(GLEnum.Texture2D);
-        GLManager.GL.Enable(GLEnum.Lighting);
+        RenderDragon.Api.PopMatrix();
+        RenderDragon.Api.Enable(GLEnum.Texture2D);
+        RenderDragon.Api.Enable(GLEnum.Lighting);
     }
 }

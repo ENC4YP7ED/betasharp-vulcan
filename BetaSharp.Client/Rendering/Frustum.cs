@@ -33,8 +33,8 @@ public class Frustum : FrustumData
 
     private void Initialize()
     {
-        GLManager.GL.GetFloat(GLEnum.ProjectionMatrix, ProjectionMatrix);
-        GLManager.GL.GetFloat(GLEnum.ModelviewMatrix, ModelviewMatrix);
+        RenderDragon.Api.GetFloat(GLEnum.ProjectionMatrix, ProjectionMatrix);
+        RenderDragon.Api.GetFloat(GLEnum.ModelviewMatrix, ModelviewMatrix);
 
         for (int i = 0; i < 4; i++)
         {

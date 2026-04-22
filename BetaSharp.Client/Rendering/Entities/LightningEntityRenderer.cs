@@ -11,10 +11,10 @@ public class LightningEntityRenderer : EntityRenderer
     public void render(EntityLightningBolt var1, double x, double y, double z, float yaw, float tickDelta)
     {
         Tessellator var10 = Tessellator.instance;
-        GLManager.GL.Disable(GLEnum.Texture2D);
-        GLManager.GL.Disable(GLEnum.Lighting);
-        GLManager.GL.Enable(GLEnum.Blend);
-        GLManager.GL.BlendFunc(GLEnum.SrcAlpha, GLEnum.One);
+        RenderDragon.Api.Disable(GLEnum.Texture2D);
+        RenderDragon.Api.Disable(GLEnum.Lighting);
+        RenderDragon.Api.Enable(GLEnum.Blend);
+        RenderDragon.Api.BlendFunc(GLEnum.SrcAlpha, GLEnum.One);
         double[] var11 = new double[8];
         double[] var12 = new double[8];
         double var13 = 0.0D;
@@ -115,9 +115,9 @@ public class LightningEntityRenderer : EntityRenderer
             }
         }
 
-        GLManager.GL.Disable(GLEnum.Blend);
-        GLManager.GL.Enable(GLEnum.Lighting);
-        GLManager.GL.Enable(GLEnum.Texture2D);
+        RenderDragon.Api.Disable(GLEnum.Blend);
+        RenderDragon.Api.Enable(GLEnum.Lighting);
+        RenderDragon.Api.Enable(GLEnum.Texture2D);
     }
 
     public override void Render(Entity target, double x, double y, double z, float yaw, float tickDelta)

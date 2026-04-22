@@ -137,13 +137,13 @@ public class GameRenderer
     private void renderWorld(float tickDelta)
     {
         _viewDistance = _client.Options.renderDistance * 16.0f;
-        GLManager.GL.MatrixMode(GLEnum.Projection);
-        GLManager.GL.LoadIdentity();
+        RenderDragon.Api.MatrixMode(GLEnum.Projection);
+        RenderDragon.Api.LoadIdentity();
 
         if (cameraController.CameraZoom != 1.0D)
         {
-            GLManager.GL.Translate((float)cameraController.CameraYaw, (float)-cameraController.CameraPitch, 0.0F);
-            GLManager.GL.Scale(cameraController.CameraZoom, cameraController.CameraZoom, 1.0D);
+            RenderDragon.Api.Translate((float)cameraController.CameraYaw, (float)-cameraController.CameraPitch, 0.0F);
+            RenderDragon.Api.Scale(cameraController.CameraZoom, cameraController.CameraZoom, 1.0D);
             GLU.gluPerspective(cameraController.GetFov(tickDelta), _client.DisplayWidth / (float)_client.DisplayHeight, 0.05F, _viewDistance * 2.0F);
         }
         else
@@ -151,8 +151,8 @@ public class GameRenderer
             GLU.gluPerspective(cameraController.GetFov(tickDelta), _client.DisplayWidth / (float)_client.DisplayHeight, 0.05F, _viewDistance * 2.0F);
         }
 
-        GLManager.GL.MatrixMode(GLEnum.Modelview);
-        GLManager.GL.LoadIdentity();
+        RenderDragon.Api.MatrixMode(GLEnum.Modelview);
+        RenderDragon.Api.LoadIdentity();
 
         cameraController.ApplyDamageTiltEffect(tickDelta);
         if (_client.Options.ViewBobbing)
@@ -165,9 +165,9 @@ public class GameRenderer
         {
             float var5 = 5.0F / (var4 * var4 + 5.0F) - var4 * 0.04F;
             var5 *= var5;
-            GLManager.GL.Rotate((_ticks + tickDelta) * 20.0F, 0.0F, 1.0F, 1.0F);
-            GLManager.GL.Scale(1.0F / var5, 1.0F, 1.0F);
-            GLManager.GL.Rotate(-(_ticks + tickDelta) * 20.0F, 0.0F, 1.0F, 1.0F);
+            RenderDragon.Api.Rotate((_ticks + tickDelta) * 20.0F, 0.0F, 1.0F, 1.0F);
+            RenderDragon.Api.Scale(1.0F / var5, 1.0F, 1.0F);
+            RenderDragon.Api.Rotate(-(_ticks + tickDelta) * 20.0F, 0.0F, 1.0F, 1.0F);
         }
 
         cameraController.ApplyCameraTransform(tickDelta);
@@ -175,19 +175,19 @@ public class GameRenderer
 
     private void renderFirstPersonHand(float tickDelta)
     {
-        GLManager.GL.MatrixMode(GLEnum.Projection);
-        GLManager.GL.LoadIdentity();
+        RenderDragon.Api.MatrixMode(GLEnum.Projection);
+        RenderDragon.Api.LoadIdentity();
         if (cameraController.CameraZoom != 1.0D)
         {
-            GLManager.GL.Translate((float)cameraController.CameraYaw, (float)-cameraController.CameraPitch, 0.0F);
-            GLManager.GL.Scale(cameraController.CameraZoom, cameraController.CameraZoom, 1.0D);
+            RenderDragon.Api.Translate((float)cameraController.CameraYaw, (float)-cameraController.CameraPitch, 0.0F);
+            RenderDragon.Api.Scale(cameraController.CameraZoom, cameraController.CameraZoom, 1.0D);
         }
 
         GLU.gluPerspective(cameraController.GetFov(tickDelta, true), _client.DisplayWidth / (float)_client.DisplayHeight, 0.05F, _viewDistance * 2.0F);
-        GLManager.GL.MatrixMode(GLEnum.Modelview);
-        GLManager.GL.LoadIdentity();
+        RenderDragon.Api.MatrixMode(GLEnum.Modelview);
+        RenderDragon.Api.LoadIdentity();
 
-        GLManager.GL.PushMatrix();
+        RenderDragon.Api.PushMatrix();
         cameraController.ApplyDamageTiltEffect(tickDelta);
         if (_client.Options.ViewBobbing)
         {
@@ -199,7 +199,7 @@ public class GameRenderer
             itemRenderer.renderItemInFirstPerson(tickDelta);
         }
 
-        GLManager.GL.PopMatrix();
+        RenderDragon.Api.PopMatrix();
         if (_client.Options.CameraMode == EnumCameraMode.FirstPerson && !_client.Camera.isSleeping())
         {
             itemRenderer.renderOverlays(tickDelta);
@@ -310,17 +310,17 @@ public class GameRenderer
             }
             else
             {
-                GLManager.GL.Viewport(0, 0, (uint)_client.FramebufferManager.FramebufferWidth, (uint)_client.FramebufferManager.FramebufferHeight);
-                GLManager.GL.MatrixMode(GLEnum.Projection);
-                GLManager.GL.LoadIdentity();
-                GLManager.GL.MatrixMode(GLEnum.Modelview);
-                GLManager.GL.LoadIdentity();
+                RenderDragon.Api.Viewport(0, 0, (uint)_client.FramebufferManager.FramebufferWidth, (uint)_client.FramebufferManager.FramebufferHeight);
+                RenderDragon.Api.MatrixMode(GLEnum.Projection);
+                RenderDragon.Api.LoadIdentity();
+                RenderDragon.Api.MatrixMode(GLEnum.Modelview);
+                RenderDragon.Api.LoadIdentity();
                 setupHudRender();
             }
 
             if (_client.CurrentScreen != null)
             {
-                GLManager.GL.Clear(ClearBufferMask.DepthBufferBit);
+                RenderDragon.Api.Clear(ClearBufferMask.DepthBufferBit);
                 setupHudRender();
                 _client.CurrentScreen.Render(scaledMouseX, scaledMouseY, tickDelta);
 
@@ -370,8 +370,8 @@ public class GameRenderer
 
     public void renderFrame(float tickDelta, long time)
     {
-        GLManager.GL.Enable(GLEnum.CullFace);
-        GLManager.GL.Enable(GLEnum.DepthTest);
+        RenderDragon.Api.Enable(GLEnum.CullFace);
+        RenderDragon.Api.Enable(GLEnum.DepthTest);
 
         using (Profiler.Begin("GetMouseOver"))
         {
@@ -387,11 +387,11 @@ public class GameRenderer
 
         using (Profiler.Begin("UpdateFog"))
         {
-            GLManager.GL.Viewport(0, 0, (uint)_client.FramebufferManager.FramebufferWidth, (uint)_client.FramebufferManager.FramebufferHeight);
+            RenderDragon.Api.Viewport(0, 0, (uint)_client.FramebufferManager.FramebufferWidth, (uint)_client.FramebufferManager.FramebufferHeight);
             updateSkyAndFogColors(tickDelta);
         }
-        GLManager.GL.Clear(ClearBufferMask.DepthBufferBit | ClearBufferMask.ColorBufferBit);
-        GLManager.GL.Enable(GLEnum.CullFace);
+        RenderDragon.Api.Clear(ClearBufferMask.DepthBufferBit | ClearBufferMask.ColorBufferBit);
+        RenderDragon.Api.Enable(GLEnum.CullFace);
         renderWorld(tickDelta);
         Frustum.Instance();
         if (_client.Options.renderDistance >= 8)
@@ -400,14 +400,14 @@ public class GameRenderer
             worldRenderer.RenderSky(tickDelta);
         }
 
-        GLManager.GL.Enable(GLEnum.Fog);
+        RenderDragon.Api.Enable(GLEnum.Fog);
         applyFog(1);
 
         FrustrumCuller frustrumCuller = new();
         frustrumCuller.SetPosition(entX, entY, entZ);
 
         applyFog(0);
-        GLManager.GL.Enable(GLEnum.Fog);
+        RenderDragon.Api.Enable(GLEnum.Fog);
         _client.TextureManager.BindTexture(_client.TextureManager.GetTextureId("/terrain.png"));
         Lighting.turnOff();
 
@@ -416,7 +416,7 @@ public class GameRenderer
             worldRenderer.SortAndRender(entity, 0, (double)tickDelta, frustrumCuller);
         }
 
-        GLManager.GL.ShadeModel(GLEnum.Flat);
+        RenderDragon.Api.ShadeModel(GLEnum.Flat);
         Lighting.turnOn();
 
         using (Profiler.Begin("RenderEntities"))
@@ -438,47 +438,47 @@ public class GameRenderer
         if (_client.ObjectMouseOver.Type != HitResultType.MISS && entity.IsInFluid(Material.Water) && entity is EntityPlayer)
         {
             entityPlayer = (EntityPlayer)entity;
-            GLManager.GL.Disable(GLEnum.AlphaTest);
+            RenderDragon.Api.Disable(GLEnum.AlphaTest);
             worldRenderer.DrawBlockBreaking(entityPlayer, _client.ObjectMouseOver, entityPlayer.inventory.GetItemInHand(), tickDelta);
             worldRenderer.DrawSelectionBox(entityPlayer, _client.ObjectMouseOver, 0, entityPlayer.inventory.GetItemInHand(), tickDelta);
-            GLManager.GL.Enable(GLEnum.AlphaTest);
+            RenderDragon.Api.Enable(GLEnum.AlphaTest);
         }
 
-        GLManager.GL.BlendFunc(GLEnum.SrcAlpha, GLEnum.OneMinusSrcAlpha);
+        RenderDragon.Api.BlendFunc(GLEnum.SrcAlpha, GLEnum.OneMinusSrcAlpha);
         applyFog(0);
-        GLManager.GL.Enable(GLEnum.Blend);
-        GLManager.GL.Disable(GLEnum.CullFace);
+        RenderDragon.Api.Enable(GLEnum.Blend);
+        RenderDragon.Api.Disable(GLEnum.CullFace);
         _client.TextureManager.BindTexture(_client.TextureManager.GetTextureId("/terrain.png"));
 
         using (Profiler.Begin("SortAndRenderTranslucent"))
         {
             worldRenderer.SortAndRender(entity, 1, tickDelta, frustrumCuller);
 
-            GLManager.GL.ShadeModel(GLEnum.Flat);
+            RenderDragon.Api.ShadeModel(GLEnum.Flat);
         }
 
         //TODO: SELCTION BOX/BLOCK BREAKING VISUALIZATON DON'T APPEAR PROPERLY MOST OF THE TIME, SAME WITH ENTITY SHADOWS. VIEW BOBBING MAKES ENTITES BOB UP AND DOWN
 
-        GLManager.GL.DepthMask(true);
-        GLManager.GL.Enable(GLEnum.CullFace);
-        GLManager.GL.Disable(GLEnum.Blend);
+        RenderDragon.Api.DepthMask(true);
+        RenderDragon.Api.Enable(GLEnum.CullFace);
+        RenderDragon.Api.Disable(GLEnum.Blend);
         if (!cameraController.IsZoomActive && entity is EntityPlayer && _client.ObjectMouseOver.Type != HitResultType.MISS && !entity.IsInFluid(Material.Water))
         {
             entityPlayer = (EntityPlayer)entity;
-            GLManager.GL.Disable(GLEnum.AlphaTest);
+            RenderDragon.Api.Disable(GLEnum.AlphaTest);
             worldRenderer.DrawBlockBreaking(entityPlayer, _client.ObjectMouseOver, entityPlayer.inventory.GetItemInHand(), tickDelta);
             worldRenderer.DrawSelectionBox(entityPlayer, _client.ObjectMouseOver, 0, entityPlayer.inventory.GetItemInHand(), tickDelta);
-            GLManager.GL.Enable(GLEnum.AlphaTest);
+            RenderDragon.Api.Enable(GLEnum.AlphaTest);
         }
 
         renderSnow(tickDelta);
-        GLManager.GL.Disable(GLEnum.Fog);
+        RenderDragon.Api.Disable(GLEnum.Fog);
         if (_targetedEntity != null)
         {
         }
 
         applyFog(0);
-        GLManager.GL.Enable(GLEnum.Fog);
+        RenderDragon.Api.Enable(GLEnum.Fog);
 
         if (_client.ShowChunkBorders)
         {
@@ -486,12 +486,12 @@ public class GameRenderer
         }
 
         worldRenderer.RenderClouds(tickDelta);
-        GLManager.GL.Disable(GLEnum.Fog);
+        RenderDragon.Api.Disable(GLEnum.Fog);
         applyFog(1);
 
         if (!cameraController.IsZoomActive)
         {
-            GLManager.GL.Clear(ClearBufferMask.DepthBufferBit);
+            RenderDragon.Api.Clear(ClearBufferMask.DepthBufferBit);
             renderFirstPersonHand(tickDelta);
         }
     }
@@ -506,15 +506,15 @@ public class GameRenderer
         int playerChunkX = _client.Player.ChunkX;
         int playerChunkZ = _client.Player.ChunkZ;
 
-        GLManager.GL.MatrixMode(GLEnum.Modelview);
-        GLManager.GL.PushMatrix();
-        GLManager.GL.Translate((float)-camX, (float)-camY, (float)-camZ);
+        RenderDragon.Api.MatrixMode(GLEnum.Modelview);
+        RenderDragon.Api.PushMatrix();
+        RenderDragon.Api.Translate((float)-camX, (float)-camY, (float)-camZ);
 
-        GLManager.GL.Disable(GLEnum.Texture2D);
-        GLManager.GL.Disable(GLEnum.Lighting);
-        GLManager.GL.Disable(GLEnum.Fog);
-        GLManager.GL.Enable(GLEnum.DepthTest);
-        GLManager.GL.DepthMask(true);
+        RenderDragon.Api.Disable(GLEnum.Texture2D);
+        RenderDragon.Api.Disable(GLEnum.Lighting);
+        RenderDragon.Api.Disable(GLEnum.Fog);
+        RenderDragon.Api.Enable(GLEnum.DepthTest);
+        RenderDragon.Api.DepthMask(true);
 
         double minX = playerChunkX * 16.0;
         double maxX = (playerChunkX + 1) * 16.0;
@@ -587,8 +587,8 @@ public class GameRenderer
         }
 
         tess.draw();
-        GLManager.GL.PopMatrix();
-        GLManager.GL.Enable(GLEnum.Texture2D);
+        RenderDragon.Api.PopMatrix();
+        RenderDragon.Api.Enable(GLEnum.Texture2D);
     }
 
     private void renderRain()
@@ -667,11 +667,11 @@ public class GameRenderer
             int var6 = MathHelper.Floor(var3.Y);
             int var7 = MathHelper.Floor(var3.Z);
             Tessellator var8 = Tessellator.instance;
-            GLManager.GL.Disable(GLEnum.CullFace);
-            GLManager.GL.Normal3(0.0F, 1.0F, 0.0F);
-            GLManager.GL.Enable(GLEnum.Blend);
-            GLManager.GL.BlendFunc(GLEnum.SrcAlpha, GLEnum.OneMinusSrcAlpha);
-            GLManager.GL.AlphaFunc(GLEnum.Greater, 0.01F);
+            RenderDragon.Api.Disable(GLEnum.CullFace);
+            RenderDragon.Api.Normal3(0.0F, 1.0F, 0.0F);
+            RenderDragon.Api.Enable(GLEnum.Blend);
+            RenderDragon.Api.BlendFunc(GLEnum.SrcAlpha, GLEnum.OneMinusSrcAlpha);
+            RenderDragon.Api.AlphaFunc(GLEnum.Greater, 0.01F);
             _client.TextureManager.BindTexture(_client.TextureManager.GetTextureId("/environment/snow.png"));
             double var9 = var3.LastTickX + (var3.X - var3.LastTickX) * (double)tickDelta;
             double var11 = var3.LastTickY + (var3.Y - var3.LastTickY) * (double)tickDelta;
@@ -733,7 +733,7 @@ public class GameRenderer
                             float var35 = MathHelper.Sqrt(var31 * var31 + var33 * var33) / var16;
                             var8.startDrawingQuads();
                             float var36 = var4.GetLuminance(var19, var23, var20);
-                            GLManager.GL.Color4(var36, var36, var36, ((1.0F - var35 * var35) * 0.3F + 0.5F) * var2);
+                            RenderDragon.Api.Color4(var36, var36, var36, ((1.0F - var35 * var35) * 0.3F + 0.5F) * var2);
                             var8.setTranslationD(-var9 * 1.0D, -var11 * 1.0D, -var13 * 1.0D);
                             var8.addVertexWithUV(var19 + 0, var24, var20 + 0.5D, (double)(0.0F * var26 + var29), (double)(var24 * var26 / 4.0F + var28 * var26 + var30));
                             var8.addVertexWithUV(var19 + 1, var24, var20 + 0.5D, (double)(1.0F * var26 + var29), (double)(var24 * var26 / 4.0F + var28 * var26 + var30));
@@ -785,7 +785,7 @@ public class GameRenderer
                             float var40 = MathHelper.Sqrt(var38 * var38 + var39 * var39) / var16;
                             var8.startDrawingQuads();
                             float var32 = var4.GetLuminance(var19, 128, var20) * 0.85F + 0.15F;
-                            GLManager.GL.Color4(var32, var32, var32, ((1.0F - var40 * var40) * 0.5F + 0.5F) * var2);
+                            RenderDragon.Api.Color4(var32, var32, var32, ((1.0F - var40 * var40) * 0.5F + 0.5F) * var2);
                             var8.setTranslationD(-var9 * 1.0D, -var11 * 1.0D, -var13 * 1.0D);
                             var8.addVertexWithUV(var19 + 0, var23, var20 + 0.5D, (double)(0.0F * var37), (double)(var23 * var37 / 4.0F + var26 * var37));
                             var8.addVertexWithUV(var19 + 1, var23, var20 + 0.5D, (double)(1.0F * var37), (double)(var23 * var37 / 4.0F + var26 * var37));
@@ -802,33 +802,33 @@ public class GameRenderer
                 }
             }
 
-            GLManager.GL.Enable(GLEnum.CullFace);
-            GLManager.GL.Disable(GLEnum.Blend);
-            GLManager.GL.AlphaFunc(GLEnum.Greater, 0.1F);
+            RenderDragon.Api.Enable(GLEnum.CullFace);
+            RenderDragon.Api.Disable(GLEnum.Blend);
+            RenderDragon.Api.AlphaFunc(GLEnum.Greater, 0.1F);
         }
     }
 
     public void setupHudRender()
     {
         ScaledResolution sr = new(_client.Options, _client.DisplayWidth, _client.DisplayHeight);
-        GLManager.GL.Clear(ClearBufferMask.DepthBufferBit);
-        GLManager.GL.MatrixMode(GLEnum.Projection);
-        GLManager.GL.LoadIdentity();
-        GLManager.GL.Ortho(0.0D, sr.ScaledWidthDouble, sr.ScaledHeightDouble, 0.0D, 1000.0D, 3000.0D);
-        GLManager.GL.MatrixMode(GLEnum.Modelview);
-        GLManager.GL.LoadIdentity();
-        GLManager.GL.Translate(0.0F, 0.0F, -2000.0F);
+        RenderDragon.Api.Clear(ClearBufferMask.DepthBufferBit);
+        RenderDragon.Api.MatrixMode(GLEnum.Projection);
+        RenderDragon.Api.LoadIdentity();
+        RenderDragon.Api.Ortho(0.0D, sr.ScaledWidthDouble, sr.ScaledHeightDouble, 0.0D, 1000.0D, 3000.0D);
+        RenderDragon.Api.MatrixMode(GLEnum.Modelview);
+        RenderDragon.Api.LoadIdentity();
+        RenderDragon.Api.Translate(0.0F, 0.0F, -2000.0F);
     }
 
     public void DrawVirtualCursor(int x, int y)
     {
         if (_client.IsControllerMode && _client.CurrentScreen?.IsEditingSlider != true)
         {
-            GLManager.GL.Disable(GLEnum.Lighting);
-            GLManager.GL.Disable(GLEnum.DepthTest);
-            GLManager.GL.Enable(GLEnum.Blend);
-            GLManager.GL.BlendFunc(GLEnum.SrcAlpha, GLEnum.OneMinusSrcAlpha);
-            GLManager.GL.Color4(1.0f, 1.0f, 1.0f, 1.0f);
+            RenderDragon.Api.Disable(GLEnum.Lighting);
+            RenderDragon.Api.Disable(GLEnum.DepthTest);
+            RenderDragon.Api.Enable(GLEnum.Blend);
+            RenderDragon.Api.BlendFunc(GLEnum.SrcAlpha, GLEnum.OneMinusSrcAlpha);
+            RenderDragon.Api.Color4(1.0f, 1.0f, 1.0f, 1.0f);
 
             TextureHandle textureId = _client.TextureManager.GetTextureId("/gui/Pointer.png");
             _client.TextureManager.BindTexture(textureId);
@@ -848,8 +848,8 @@ public class GameRenderer
             tess.addVertexWithUV(x, y, zLevel, 0.0, 0.0);
             tess.draw();
 
-            GLManager.GL.Disable(GLEnum.Blend);
-            GLManager.GL.Enable(GLEnum.DepthTest);
+            RenderDragon.Api.Disable(GLEnum.Blend);
+            RenderDragon.Api.Enable(GLEnum.DepthTest);
         }
     }
 
@@ -917,62 +917,62 @@ public class GameRenderer
         _fogColorGreen *= var12;
         _fogColorBlue *= var12;
 
-        GLManager.GL.ClearColor(_fogColorRed, _fogColorGreen, _fogColorBlue, 0.0F);
+        RenderDragon.Api.ClearColor(_fogColorRed, _fogColorGreen, _fogColorBlue, 0.0F);
     }
 
     private void applyFog(int mode)
     {
         EntityLiving var3 = _client.Camera;
-        GLManager.GL.Fog(GLEnum.FogColor, updateFogColorBuffer(_fogColorRed, _fogColorGreen, _fogColorBlue, 1.0F));
+        RenderDragon.Api.Fog(GLEnum.FogColor, updateFogColorBuffer(_fogColorRed, _fogColorGreen, _fogColorBlue, 1.0F));
         _client.WorldRenderer.ChunkRenderer.SetFogColor(_fogColorRed, _fogColorGreen, _fogColorBlue, 1.0f);
-        GLManager.GL.Normal3(0.0F, -1.0F, 0.0F);
-        GLManager.GL.Color4(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderDragon.Api.Normal3(0.0F, -1.0F, 0.0F);
+        RenderDragon.Api.Color4(1.0F, 1.0F, 1.0F, 1.0F);
         if (_cloudFog)
         {
-            GLManager.GL.Fog(GLEnum.FogMode, (int)GLEnum.Exp);
-            GLManager.GL.Fog(GLEnum.FogDensity, 0.1F);
+            RenderDragon.Api.Fog(GLEnum.FogMode, (int)GLEnum.Exp);
+            RenderDragon.Api.Fog(GLEnum.FogDensity, 0.1F);
             _client.WorldRenderer.ChunkRenderer.SetFogMode(1);
             _client.WorldRenderer.ChunkRenderer.SetFogDensity(0.1f);
         }
         else if (var3.IsInFluid(Material.Water))
         {
-            GLManager.GL.Fog(GLEnum.FogMode, (int)GLEnum.Exp);
-            GLManager.GL.Fog(GLEnum.FogDensity, 0.1F);
+            RenderDragon.Api.Fog(GLEnum.FogMode, (int)GLEnum.Exp);
+            RenderDragon.Api.Fog(GLEnum.FogDensity, 0.1F);
             _client.WorldRenderer.ChunkRenderer.SetFogMode(1);
             _client.WorldRenderer.ChunkRenderer.SetFogDensity(0.1f);
         }
         else if (var3.IsInFluid(Material.Lava))
         {
-            GLManager.GL.Fog(GLEnum.FogMode, (int)GLEnum.Exp);
-            GLManager.GL.Fog(GLEnum.FogDensity, 2.0F);
+            RenderDragon.Api.Fog(GLEnum.FogMode, (int)GLEnum.Exp);
+            RenderDragon.Api.Fog(GLEnum.FogDensity, 2.0F);
             _client.WorldRenderer.ChunkRenderer.SetFogMode(1);
             _client.WorldRenderer.ChunkRenderer.SetFogDensity(2.0f);
         }
         else
         {
-            GLManager.GL.Fog(GLEnum.FogMode, (int)GLEnum.Linear);
-            GLManager.GL.Fog(GLEnum.FogStart, _viewDistance * 0.25F);
-            GLManager.GL.Fog(GLEnum.FogEnd, _viewDistance);
+            RenderDragon.Api.Fog(GLEnum.FogMode, (int)GLEnum.Linear);
+            RenderDragon.Api.Fog(GLEnum.FogStart, _viewDistance * 0.25F);
+            RenderDragon.Api.Fog(GLEnum.FogEnd, _viewDistance);
             _client.WorldRenderer.ChunkRenderer.SetFogMode(0);
             _client.WorldRenderer.ChunkRenderer.SetFogStart(_viewDistance * 0.25f);
             _client.WorldRenderer.ChunkRenderer.SetFogEnd(_viewDistance);
             if (mode < 0)
             {
-                GLManager.GL.Fog(GLEnum.FogStart, 0.0F);
-                GLManager.GL.Fog(GLEnum.FogEnd, _viewDistance * 0.8F);
+                RenderDragon.Api.Fog(GLEnum.FogStart, 0.0F);
+                RenderDragon.Api.Fog(GLEnum.FogEnd, _viewDistance * 0.8F);
                 _client.WorldRenderer.ChunkRenderer.SetFogStart(0.0f);
                 _client.WorldRenderer.ChunkRenderer.SetFogEnd(_viewDistance * 0.8f);
             }
 
             if (_client.World.Dimension.IsNether)
             {
-                GLManager.GL.Fog(GLEnum.FogStart, 0.0F);
+                RenderDragon.Api.Fog(GLEnum.FogStart, 0.0F);
                 _client.WorldRenderer.ChunkRenderer.SetFogStart(0.0f);
             }
         }
 
-        GLManager.GL.Enable(GLEnum.ColorMaterial);
-        GLManager.GL.ColorMaterial(GLEnum.Front, GLEnum.Ambient);
+        RenderDragon.Api.Enable(GLEnum.ColorMaterial);
+        RenderDragon.Api.ColorMaterial(GLEnum.Front, GLEnum.Ambient);
     }
 
     private float[] updateFogColorBuffer(float var1, float var2, float var3, float var4)

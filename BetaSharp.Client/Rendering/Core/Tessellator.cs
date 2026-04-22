@@ -153,7 +153,7 @@ public class Tessellator
         bufferSize = var1;
         rawBuffer = new int[var1];
         _vboIds = new uint[vboCount];
-        GLManager.GL.GenBuffers((uint)vboCount, _vboIds);
+        RenderDragon.Api.GenBuffers((uint)vboCount, _vboIds);
     }
 
     public Tessellator()
@@ -250,55 +250,55 @@ public class Tessellator
             if (vertexCount > 0)
             {
                 vboIndex = (vboIndex + 1) % vboCount;
-                GLManager.GL.BindBuffer(GLEnum.ArrayBuffer, _vboIds[vboIndex]);
+                RenderDragon.Api.BindBuffer(GLEnum.ArrayBuffer, _vboIds[vboIndex]);
 
                 fixed (int* ptr = rawBuffer)
                 {
-                    GLManager.GL.BufferData(GLEnum.ArrayBuffer, (nuint)(rawBufferIndex * 4), ptr, GLEnum.StreamDraw);
+                    RenderDragon.Api.BufferData(GLEnum.ArrayBuffer, (nuint)(rawBufferIndex * 4), ptr, GLEnum.StreamDraw);
                 }
 
                 if (hasTexture)
                 {
-                    GLManager.GL.TexCoordPointer(2, GLEnum.Float, 32, (void*)12);
-                    GLManager.GL.EnableClientState(GLEnum.TextureCoordArray);
+                    RenderDragon.Api.TexCoordPointer(2, GLEnum.Float, 32, (void*)12);
+                    RenderDragon.Api.EnableClientState(GLEnum.TextureCoordArray);
                 }
                 if (hasColor)
                 {
-                    GLManager.GL.ColorPointer(4, ColorPointerType.UnsignedByte, 32, (void*)20);
-                    GLManager.GL.EnableClientState(GLEnum.ColorArray);
+                    RenderDragon.Api.ColorPointer(4, ColorPointerType.UnsignedByte, 32, (void*)20);
+                    RenderDragon.Api.EnableClientState(GLEnum.ColorArray);
                 }
                 if (hasNormals)
                 {
-                    GLManager.GL.NormalPointer(NormalPointerType.Byte, 32, (void*)24);
-                    GLManager.GL.EnableClientState(GLEnum.NormalArray);
+                    RenderDragon.Api.NormalPointer(NormalPointerType.Byte, 32, (void*)24);
+                    RenderDragon.Api.EnableClientState(GLEnum.NormalArray);
                 }
 
-                GLManager.GL.VertexPointer(3, GLEnum.Float, 32, (void*)0);
+                RenderDragon.Api.VertexPointer(3, GLEnum.Float, 32, (void*)0);
 
-                GLManager.GL.EnableClientState(GLEnum.VertexArray);
+                RenderDragon.Api.EnableClientState(GLEnum.VertexArray);
                 if (drawMode == 7 && convertQuadsToTriangles)
                 {
-                    GLManager.GL.DrawArrays(GLEnum.Triangles, 0, (uint)vertexCount);
+                    RenderDragon.Api.DrawArrays(GLEnum.Triangles, 0, (uint)vertexCount);
                 }
                 else
                 {
-                    GLManager.GL.DrawArrays((GLEnum)drawMode, 0, (uint)vertexCount);
+                    RenderDragon.Api.DrawArrays((GLEnum)drawMode, 0, (uint)vertexCount);
                 }
 
-                GLManager.GL.DisableClientState(GLEnum.VertexArray);
+                RenderDragon.Api.DisableClientState(GLEnum.VertexArray);
                 if (hasTexture)
                 {
-                    GLManager.GL.DisableClientState(GLEnum.TextureCoordArray);
+                    RenderDragon.Api.DisableClientState(GLEnum.TextureCoordArray);
                 }
 
                 if (hasColor)
                 {
-                    GLManager.GL.DisableClientState(GLEnum.ColorArray);
+                    RenderDragon.Api.DisableClientState(GLEnum.ColorArray);
                 }
 
                 if (hasNormals)
                 {
-                    GLManager.GL.DisableClientState(GLEnum.NormalArray);
+                    RenderDragon.Api.DisableClientState(GLEnum.NormalArray);
                 }
             }
 

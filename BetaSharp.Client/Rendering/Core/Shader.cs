@@ -12,7 +12,7 @@ public class Shader : IDisposable
 
     public Shader(string vertexShaderSource, string fragmentShaderSource)
     {
-        IGL gl = GLManager.GL;
+        IGL gl = RenderDragon.Api;
 
         uint vertexShader = gl.CreateShader(ShaderType.VertexShader);
         gl.ShaderSource(vertexShader, vertexShaderSource);
@@ -36,31 +36,31 @@ public class Shader : IDisposable
 
     public void Bind()
     {
-        GLManager.GL.UseProgram(_id);
+        RenderDragon.Api.UseProgram(_id);
     }
 
     public void SetUniform3(string name, Vector3D<float> vec)
     {
         int location = GetUniformLocation(name);
-        GLManager.GL.Uniform3(location, vec.X, vec.Y, vec.Z);
+        RenderDragon.Api.Uniform3(location, vec.X, vec.Y, vec.Z);
     }
 
     public void SetUniform1(string name, float value)
     {
         int location = GetUniformLocation(name);
-        GLManager.GL.Uniform1(location, value);
+        RenderDragon.Api.Uniform1(location, value);
     }
 
     public void SetUniform1(string name, int value)
     {
         int location = GetUniformLocation(name);
-        GLManager.GL.Uniform1(location, value);
+        RenderDragon.Api.Uniform1(location, value);
     }
 
     public void SetUniform2(string name, float x, float y)
     {
         int location = GetUniformLocation(name);
-        GLManager.GL.Uniform2(location, x, y);
+        RenderDragon.Api.Uniform2(location, x, y);
     }
 
     public void SetUniformMatrix4(string name, Matrix4X4<float> matrix)
@@ -68,7 +68,7 @@ public class Shader : IDisposable
         int location = GetUniformLocation(name);
         unsafe
         {
-            GLManager.GL.UniformMatrix4(location, 1, false, (float*)&matrix);
+            RenderDragon.Api.UniformMatrix4(location, 1, false, (float*)&matrix);
         }
     }
 
@@ -79,7 +79,7 @@ public class Shader : IDisposable
         {
             fixed (float* mat = matrix)
             {
-                GLManager.GL.UniformMatrix4(location, 1, false, mat);
+                RenderDragon.Api.UniformMatrix4(location, 1, false, mat);
             }
         }
     }
@@ -87,7 +87,7 @@ public class Shader : IDisposable
     public void SetUniform4(string name, Vector4D<float> vec)
     {
         int location = GetUniformLocation(name);
-        GLManager.GL.Uniform4(location, vec.X, vec.Y, vec.Z, vec.W);
+        RenderDragon.Api.Uniform4(location, vec.X, vec.Y, vec.Z, vec.W);
     }
 
     private int GetUniformLocation(string name)
@@ -97,7 +97,7 @@ public class Shader : IDisposable
             return location;
         }
 
-        location = GLManager.GL.GetUniformLocation(_id, name);
+        location = RenderDragon.Api.GetUniformLocation(_id, name);
         _uniformLocations[name] = location;
 
         if (location == -1)
@@ -110,7 +110,7 @@ public class Shader : IDisposable
 
     private static void CheckShaderCompilation(uint shader, string type)
     {
-        IGL gl = GLManager.GL;
+        IGL gl = RenderDragon.Api;
         gl.GetShader(shader, ShaderParameterName.CompileStatus, out int success);
         if (success == 0)
         {
@@ -121,7 +121,7 @@ public class Shader : IDisposable
 
     private static void CheckProgramLinking(uint program)
     {
-        IGL gl = GLManager.GL;
+        IGL gl = RenderDragon.Api;
         gl.GetProgram(program, ProgramPropertyARB.LinkStatus, out int success);
         if (success == 0)
         {
@@ -132,7 +132,7 @@ public class Shader : IDisposable
 
     public void Dispose()
     {
-        GLManager.GL.DeleteProgram(_id);
+        RenderDragon.Api.DeleteProgram(_id);
         GC.SuppressFinalize(this);
     }
 }

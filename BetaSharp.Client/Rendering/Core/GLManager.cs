@@ -5,10 +5,10 @@ namespace BetaSharp.Client.Rendering.Core;
 
 public class GLManager
 {
-    public static IGL GL { get; private set; }
+    public static IGL GL => RenderDragon.Api;
 
     public static void Init(GL silkGl)
     {
-        GL = new EmulatedGL(silkGl);
+        RenderDragon.BindOpenGL(silkGl);
     }
 }

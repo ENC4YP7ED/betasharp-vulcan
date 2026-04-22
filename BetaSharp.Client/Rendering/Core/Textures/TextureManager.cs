@@ -70,7 +70,7 @@ public class TextureManager : IDisposable
 
     public TextureHandle Load(Image<Rgba32> image)
     {
-        var texture = new GLTexture("Image_Direct");
+        GLTexture texture = RenderDragon.CreateTexture("Image_Direct");
         Load(image, texture, false);
         var handle = new TextureHandle(texture);
         _images[texture.Id] = (image, handle);
@@ -81,7 +81,7 @@ public class TextureManager : IDisposable
     {
         if (_textures.TryGetValue(path, out TextureHandle? handle)) return handle;
 
-        var texture = new GLTexture(path);
+        GLTexture texture = RenderDragon.CreateTexture(path);
         handle = new TextureHandle(texture);
         _textures[path] = handle;
 
@@ -276,7 +276,7 @@ public class TextureManager : IDisposable
         {
             entry.Value.Texture?.Dispose();
 
-            var newTexture = new GLTexture(entry.Key);
+            GLTexture newTexture = RenderDragon.CreateTexture(entry.Key);
             entry.Value.Texture = newTexture;
 
             try
@@ -299,7 +299,7 @@ public class TextureManager : IDisposable
         {
             entry.Value.Handle.Texture?.Dispose();
 
-            var newTexture = new GLTexture(entry.Value.Handle.Texture?.Source ?? "Image_Direct_Reload");
+            GLTexture newTexture = RenderDragon.CreateTexture(entry.Value.Handle.Texture?.Source ?? "Image_Direct_Reload");
             entry.Value.Handle.Texture = newTexture;
             Load(entry.Value.Image, newTexture, false);
             _images[newTexture.Id] = entry.Value;

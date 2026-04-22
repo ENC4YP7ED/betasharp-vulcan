@@ -217,7 +217,7 @@ public partial class BetaSharp :
 
         LoadScreen();
 
-        SetupOpenGLAndInput();
+        SetupGraphicsAndInput();
         SetupResourcesAndPostProcessing();
 
         CheckGLError("Post startup");
@@ -268,17 +268,24 @@ public partial class BetaSharp :
             int[] msaaValues = [0, 2, 4, 8];
             Display.MSAA_Samples = msaaValues[Options.MSAALevel];
 
-            Display.create();
+            RenderDragon.SelectBackend(Options.RenderBackendPreference, _logger);
+
+            Display.create(RenderDragon.ActiveBackend);
             Display.getGlfw().SetWindowSizeLimits(Display.GetWindowHandle(), 850, 480, maximumWidth, maximumHeight);
 
             GLManager.Init(Display.getGL()!);
-            if (GLManager.GL is LegacyGL legacyGl)
+            if (RenderDragon.Api is LegacyGL legacyGl)
             {
                 _debugTelemetry.CaptureSystemInfo(legacyGl);
             }
             else
             {
                 _debugTelemetry.CaptureSystemInfo(null);
+            }
+
+            if (RenderDragon.IsUsingFallback)
+            {
+                _logger.LogWarning("RenderDragon fallback active: {FallbackReason}", RenderDragon.FallbackReason);
             }
 
             Display.getGlfw().SwapInterval(Options.VSync ? 1 : 0);
@@ -339,14 +346,14 @@ public partial class BetaSharp :
         };
     }
 
-    private unsafe void SetupOpenGLAndInput()
+    private unsafe void SetupGraphicsAndInput()
     {
-        bool anisotropicFiltering = GLManager.GL.IsExtensionPresent("GL_EXT_texture_filter_anisotropic");
+        bool anisotropicFiltering = RenderDragon.Api.IsExtensionPresent("GL_EXT_texture_filter_anisotropic");
         _logger.LogInformation($"Anisotropic Filtering Supported: {anisotropicFiltering}");
 
         if (anisotropicFiltering)
         {
-            GLManager.GL.GetFloat(GLEnum.MaxTextureMaxAnisotropy, out float maxAnisotropy);
+            RenderDragon.Api.GetFloat(GLEnum.MaxTextureMaxAnisotropy, out float maxAnisotropy);
             GameOptions.MaxAnisotropy = maxAnisotropy;
             _logger.LogInformation($"Max Anisotropy: {maxAnisotropy}");
         }
@@ -396,17 +403,17 @@ public partial class BetaSharp :
         };
 
         CheckGLError("Pre startup");
-        GLManager.GL.Enable(GLEnum.Texture2D);
-        GLManager.GL.ShadeModel(GLEnum.Smooth);
-        GLManager.GL.ClearDepth(1.0D);
-        GLManager.GL.Enable(GLEnum.DepthTest);
-        GLManager.GL.DepthFunc(GLEnum.Lequal);
-        GLManager.GL.Enable(GLEnum.AlphaTest);
-        GLManager.GL.AlphaFunc(GLEnum.Greater, 0.1F);
-        GLManager.GL.CullFace(GLEnum.Back);
-        GLManager.GL.MatrixMode(GLEnum.Projection);
-        GLManager.GL.LoadIdentity();
-        GLManager.GL.MatrixMode(GLEnum.Modelview);
+        RenderDragon.Api.Enable(GLEnum.Texture2D);
+        RenderDragon.Api.ShadeModel(GLEnum.Smooth);
+        RenderDragon.Api.ClearDepth(1.0D);
+        RenderDragon.Api.Enable(GLEnum.DepthTest);
+        RenderDragon.Api.DepthFunc(GLEnum.Lequal);
+        RenderDragon.Api.Enable(GLEnum.AlphaTest);
+        RenderDragon.Api.AlphaFunc(GLEnum.Greater, 0.1F);
+        RenderDragon.Api.CullFace(GLEnum.Back);
+        RenderDragon.Api.MatrixMode(GLEnum.Projection);
+        RenderDragon.Api.LoadIdentity();
+        RenderDragon.Api.MatrixMode(GLEnum.Modelview);
         CheckGLError("Startup");
     }
 
@@ -428,7 +435,7 @@ public partial class BetaSharp :
         TextureManager.AddDynamicTexture(new FireSprite(1));
 
         WorldRenderer = new WorldRenderer(this, TextureManager);
-        GLManager.GL.Viewport(0, 0, (uint)Display.getFramebufferWidth(), (uint)Display.getFramebufferHeight());
+        RenderDragon.Api.Viewport(0, 0, (uint)Display.getFramebufferWidth(), (uint)Display.getFramebufferHeight());
         ParticleManager = new ParticleManager(World, TextureManager);
 
         _ = new ResourceManager()
@@ -621,7 +628,7 @@ public partial class BetaSharp :
                     CheckGLError("Pre render");
 
                     SoundManager.UpdateListener(Player, Timer.renderPartialTicks);
-                    GLManager.GL.Enable(GLEnum.Texture2D);
+                    RenderDragon.Api.Enable(GLEnum.Texture2D);
 
                     if (World != null)
                     {
@@ -1684,12 +1691,12 @@ public partial class BetaSharp :
                 int framebufferHeight = Display.getFramebufferHeight();
                 int size = framebufferWidth * framebufferHeight * 3;
                 byte[] pixels = new byte[size];
-                GLManager.GL.PixelStore(PixelStoreParameter.PackAlignment, 1);
+                RenderDragon.Api.PixelStore(PixelStoreParameter.PackAlignment, 1);
                 unsafe
                 {
                     fixed (byte* p = pixels)
                     {
-                        GLManager.GL.ReadPixels(0, 0, (uint)framebufferWidth, (uint)framebufferHeight, PixelFormat.Rgb, PixelType.UnsignedByte, p);
+                        RenderDragon.Api.ReadPixels(0, 0, (uint)framebufferWidth, (uint)framebufferHeight, PixelFormat.Rgb, PixelType.UnsignedByte, p);
                     }
                 }
 
@@ -1761,7 +1768,7 @@ public partial class BetaSharp :
     [Conditional("DEBUG")]
     private void CheckGLError(string location)
     {
-        GLEnum glError = GLManager.GL.GetError();
+        GLEnum glError = RenderDragon.Api.GetError();
         if (glError != 0)
         {
             _logger.LogError($"#### GL ERROR ####");
@@ -1774,20 +1781,20 @@ public partial class BetaSharp :
     private void LoadScreen()
     {
         ScaledResolution var1 = new(Options, DisplayWidth, DisplayHeight);
-        GLManager.GL.Clear(ClearBufferMask.DepthBufferBit | ClearBufferMask.ColorBufferBit);
-        GLManager.GL.MatrixMode(GLEnum.Projection);
-        GLManager.GL.LoadIdentity();
-        GLManager.GL.Ortho(0.0D, var1.ScaledWidth, var1.ScaledHeight, 0.0D, 1000.0D, 3000.0D);
-        GLManager.GL.MatrixMode(GLEnum.Modelview);
-        GLManager.GL.LoadIdentity();
-        GLManager.GL.Translate(0.0F, 0.0F, -2000.0F);
-        GLManager.GL.Viewport(0, 0, (uint)Display.getFramebufferWidth(), (uint)Display.getFramebufferHeight());
-        GLManager.GL.ClearColor(0.0F, 0.0F, 0.0F, 0.0F);
+        RenderDragon.Api.Clear(ClearBufferMask.DepthBufferBit | ClearBufferMask.ColorBufferBit);
+        RenderDragon.Api.MatrixMode(GLEnum.Projection);
+        RenderDragon.Api.LoadIdentity();
+        RenderDragon.Api.Ortho(0.0D, var1.ScaledWidth, var1.ScaledHeight, 0.0D, 1000.0D, 3000.0D);
+        RenderDragon.Api.MatrixMode(GLEnum.Modelview);
+        RenderDragon.Api.LoadIdentity();
+        RenderDragon.Api.Translate(0.0F, 0.0F, -2000.0F);
+        RenderDragon.Api.Viewport(0, 0, (uint)Display.getFramebufferWidth(), (uint)Display.getFramebufferHeight());
+        RenderDragon.Api.ClearColor(0.0F, 0.0F, 0.0F, 0.0F);
         Tessellator tessellator = Tessellator.instance;
-        GLManager.GL.Disable(GLEnum.Lighting);
-        GLManager.GL.Enable(GLEnum.Texture2D);
-        GLManager.GL.Disable(GLEnum.Fog);
-        GLManager.GL.Color4(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderDragon.Api.Disable(GLEnum.Lighting);
+        RenderDragon.Api.Enable(GLEnum.Texture2D);
+        RenderDragon.Api.Disable(GLEnum.Fog);
+        RenderDragon.Api.Color4(1.0F, 1.0F, 1.0F, 1.0F);
         TextureManager.BindTexture(TextureManager.GetTextureId("/title/mojang.png"));
         tessellator.startDrawingQuads();
         tessellator.setColorOpaque_I(0xFFFFFF);
@@ -1798,13 +1805,13 @@ public partial class BetaSharp :
         tessellator.draw();
         short var3 = 256;
         short var4 = 256;
-        GLManager.GL.Color4(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderDragon.Api.Color4(1.0F, 1.0F, 1.0F, 1.0F);
         tessellator.setColorOpaque_I(0xFFFFFF);
         DrawTextureRegion((var1.ScaledWidth - var3) / 2, (var1.ScaledHeight - var4) / 2, 0, 0, var3, var4);
-        GLManager.GL.Disable(GLEnum.Lighting);
-        GLManager.GL.Disable(GLEnum.Fog);
-        GLManager.GL.Enable(GLEnum.AlphaTest);
-        GLManager.GL.AlphaFunc(GLEnum.Greater, 0.1F);
+        RenderDragon.Api.Disable(GLEnum.Lighting);
+        RenderDragon.Api.Disable(GLEnum.Fog);
+        RenderDragon.Api.Enable(GLEnum.AlphaTest);
+        RenderDragon.Api.AlphaFunc(GLEnum.Greater, 0.1F);
         Display.swapBuffers();
     }
 

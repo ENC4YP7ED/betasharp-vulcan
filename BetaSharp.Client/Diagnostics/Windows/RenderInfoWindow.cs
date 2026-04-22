@@ -1,4 +1,5 @@
 using BetaSharp.Diagnostics;
+using BetaSharp.Client.Rendering.Core;
 using Hexa.NET.ImGui;
 
 namespace BetaSharp.Client.Diagnostics.Windows;
@@ -10,6 +11,11 @@ internal sealed class RenderInfoWindow : DebugWindow
 
     protected override void OnDraw()
     {
+        if (ImGui.CollapsingHeader("Backend", ImGuiTreeNodeFlags.DefaultOpen))
+        {
+            DrawBackendSection();
+        }
+
         if (MetricRegistry.IsStale(RenderMetrics.ChunksTotal))
         {
             ImGui.TextDisabled("No world loaded.");
@@ -43,6 +49,19 @@ internal sealed class RenderInfoWindow : DebugWindow
         ImGui.Text($"VBO Allocated:      {MetricRegistry.Get(RenderMetrics.VboAllocatedMb):F2} MB");
         ImGui.Text($"Mesh Version Alloc: {MetricRegistry.Get(RenderMetrics.MeshVersionAllocated)}");
         ImGui.Text($"Mesh Version Free:  {MetricRegistry.Get(RenderMetrics.MeshVersionReleased)}");
+    }
+
+    private static void DrawBackendSection()
+    {
+        ImGui.Text($"Preferred: {RenderDragon.PreferredBackend}");
+        ImGui.Text($"Requested: {RenderDragon.RequestedBackend}");
+        ImGui.Text($"Active:    {RenderDragon.ActiveBackend}");
+
+        if (RenderDragon.IsUsingFallback)
+        {
+            ImGui.Spacing();
+            ImGui.TextWrapped(RenderDragon.FallbackReason);
+        }
     }
 
     private static void DrawEntitiesSection()

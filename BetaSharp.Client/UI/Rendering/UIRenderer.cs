@@ -31,13 +31,13 @@ public class UIRenderer(TextRenderer textRenderer, TextureManager textureManager
 
     public void Begin()
     {
-        GLManager.GL.Disable(GLEnum.Lighting);
-        GLManager.GL.Disable(GLEnum.DepthTest);
-        GLManager.GL.Disable(GLEnum.CullFace);
-        GLManager.GL.Color4(1.0F, 1.0F, 1.0F, 1.0F);
-        GLManager.GL.Enable(GLEnum.Blend);
-        GLManager.GL.BlendFunc(GLEnum.SrcAlpha, GLEnum.OneMinusSrcAlpha);
-        GLManager.GL.PushMatrix();
+        RenderDragon.Api.Disable(GLEnum.Lighting);
+        RenderDragon.Api.Disable(GLEnum.DepthTest);
+        RenderDragon.Api.Disable(GLEnum.CullFace);
+        RenderDragon.Api.Color4(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderDragon.Api.Enable(GLEnum.Blend);
+        RenderDragon.Api.BlendFunc(GLEnum.SrcAlpha, GLEnum.OneMinusSrcAlpha);
+        RenderDragon.Api.PushMatrix();
 
         _translateX = 0;
         _translateY = 0;
@@ -46,40 +46,40 @@ public class UIRenderer(TextRenderer textRenderer, TextureManager textureManager
 
     public void End()
     {
-        GLManager.GL.PopMatrix();
-        GLManager.GL.Color4(1.0f, 1.0f, 1.0f, 1.0f);
+        RenderDragon.Api.PopMatrix();
+        RenderDragon.Api.Color4(1.0f, 1.0f, 1.0f, 1.0f);
     }
 
     public void PushColor(Color color)
     {
-        GLManager.GL.Color4(color.R / 255.0f, color.G / 255.0f, color.B / 255.0f, color.A / 255.0f);
+        RenderDragon.Api.Color4(color.R / 255.0f, color.G / 255.0f, color.B / 255.0f, color.A / 255.0f);
     }
 
     public void PopColor()
     {
-        GLManager.GL.Color4(1.0f, 1.0f, 1.0f, 1.0f);
+        RenderDragon.Api.Color4(1.0f, 1.0f, 1.0f, 1.0f);
     }
 
-    public void SetDepthMask(bool flag) => GLManager.GL.DepthMask(flag);
+    public void SetDepthMask(bool flag) => RenderDragon.Api.DepthMask(flag);
     public void SetAlphaTest(bool flag)
     {
-        if (flag) GLManager.GL.Enable(GLEnum.AlphaTest);
-        else GLManager.GL.Disable(GLEnum.AlphaTest);
+        if (flag) RenderDragon.Api.Enable(GLEnum.AlphaTest);
+        else RenderDragon.Api.Disable(GLEnum.AlphaTest);
     }
 
     public void PushBlend(GLEnum s, GLEnum d)
     {
-        GLManager.GL.BlendFunc(s, d);
+        RenderDragon.Api.BlendFunc(s, d);
     }
 
     public void PopBlend()
     {
-        GLManager.GL.BlendFunc(GLEnum.SrcAlpha, GLEnum.OneMinusSrcAlpha);
+        RenderDragon.Api.BlendFunc(GLEnum.SrcAlpha, GLEnum.OneMinusSrcAlpha);
     }
 
     public void ClearDepth()
     {
-        GLManager.GL.Clear((ClearBufferMask)GLEnum.DepthBufferBit);
+        RenderDragon.Api.Clear((ClearBufferMask)GLEnum.DepthBufferBit);
     }
 
     public void PushTranslate(float x, float y)
@@ -139,13 +139,13 @@ public class UIRenderer(TextRenderer textRenderer, TextureManager textureManager
         int physicalWidth = clampedRight - clampedLeft;
         int physicalHeight = clampedBottom - clampedTop;
 
-        GLManager.GL.Enable(GLEnum.ScissorTest);
-        GLManager.GL.Scissor(physicalX, physicalY, (uint)Math.Max(0, physicalWidth), (uint)Math.Max(0, physicalHeight));
+        RenderDragon.Api.Enable(GLEnum.ScissorTest);
+        RenderDragon.Api.Scissor(physicalX, physicalY, (uint)Math.Max(0, physicalWidth), (uint)Math.Max(0, physicalHeight));
     }
 
     public void DisableClipping()
     {
-        GLManager.GL.Disable(GLEnum.ScissorTest);
+        RenderDragon.Api.Disable(GLEnum.ScissorTest);
     }
 
     public void DrawRect(float x, float y, float width, float height, Color color)
@@ -181,9 +181,9 @@ public class UIRenderer(TextRenderer textRenderer, TextureManager textureManager
             return;
         }
 
-        GLManager.GL.PushMatrix();
-        GLManager.GL.Translate(MathF.Floor(x + _translateX), MathF.Floor(y + _translateY), 0);
-        GLManager.GL.Scale(scale, scale, 1);
+        RenderDragon.Api.PushMatrix();
+        RenderDragon.Api.Translate(MathF.Floor(x + _translateX), MathF.Floor(y + _translateY), 0);
+        RenderDragon.Api.Scale(scale, scale, 1);
         if (shadow)
         {
             TextRenderer.DrawStringWithShadow(text, 0, 0, color);
@@ -192,7 +192,7 @@ public class UIRenderer(TextRenderer textRenderer, TextureManager textureManager
         {
             TextRenderer.DrawString(text, 0, 0, color);
         }
-        GLManager.GL.PopMatrix();
+        RenderDragon.Api.PopMatrix();
     }
 
     public void DrawTextWrapped(string text, float x, float y, float maxWidth, Color color)
@@ -215,10 +215,10 @@ public class UIRenderer(TextRenderer textRenderer, TextureManager textureManager
             return;
         }
 
-        GLManager.GL.PushMatrix();
-        GLManager.GL.Translate(MathF.Floor(x + _translateX), MathF.Floor(y + _translateY), 0);
-        if (rotation != 0) GLManager.GL.Rotate(rotation, 0, 0, 1);
-        if (scale != 1.0f) GLManager.GL.Scale(scale, scale, 1);
+        RenderDragon.Api.PushMatrix();
+        RenderDragon.Api.Translate(MathF.Floor(x + _translateX), MathF.Floor(y + _translateY), 0);
+        if (rotation != 0) RenderDragon.Api.Rotate(rotation, 0, 0, 1);
+        if (scale != 1.0f) RenderDragon.Api.Scale(scale, scale, 1);
 
         if (shadow)
         {
@@ -229,7 +229,7 @@ public class UIRenderer(TextRenderer textRenderer, TextureManager textureManager
             TextRenderer.DrawString(text, 0, 0, color, HorizontalAlignment.Center);
         }
 
-        GLManager.GL.PopMatrix();
+        RenderDragon.Api.PopMatrix();
     }
 
     public void DrawTexture(TextureHandle texture, float x, float y, float width, float height)
@@ -286,7 +286,7 @@ public class UIRenderer(TextRenderer textRenderer, TextureManager textureManager
         float finalX = MathF.Floor(x + _translateX);
         float finalY = MathF.Floor(y + _translateY);
 
-        GLManager.GL.Color4(1.0f, 1.0f, 1.0f, 1.0f);
+        RenderDragon.Api.Color4(1.0f, 1.0f, 1.0f, 1.0f);
 
         tess.startDrawingQuads();
         tess.setColorOpaque_I(0x404040);
@@ -310,26 +310,26 @@ public class UIRenderer(TextRenderer textRenderer, TextureManager textureManager
 
         if (isBlock)
         {
-            GLManager.GL.PushMatrix();
-            GLManager.GL.Translate(0, 0, 32.0f);
+            RenderDragon.Api.PushMatrix();
+            RenderDragon.Api.Translate(0, 0, 32.0f);
 
-            GLManager.GL.Disable(GLEnum.CullFace);
-            GLManager.GL.Enable(GLEnum.RescaleNormal);
-            GLManager.GL.Enable(GLEnum.DepthTest);
+            RenderDragon.Api.Disable(GLEnum.CullFace);
+            RenderDragon.Api.Enable(GLEnum.RescaleNormal);
+            RenderDragon.Api.Enable(GLEnum.DepthTest);
 
             Lighting.turnOnGui();
             _itemRenderer.renderItemIntoGUI(TextRenderer, TextureManager, stack, (int)(x + _translateX), (int)(y + _translateY));
             Lighting.turnOff();
 
-            GLManager.GL.Disable(GLEnum.CullFace);
-            GLManager.GL.Disable(GLEnum.DepthTest);
-            GLManager.GL.Disable(GLEnum.RescaleNormal);
-            GLManager.GL.PopMatrix();
+            RenderDragon.Api.Disable(GLEnum.CullFace);
+            RenderDragon.Api.Disable(GLEnum.DepthTest);
+            RenderDragon.Api.Disable(GLEnum.RescaleNormal);
+            RenderDragon.Api.PopMatrix();
         }
         else
         {
-            GLManager.GL.Disable(GLEnum.Lighting);
-            GLManager.GL.Disable(GLEnum.DepthTest);
+            RenderDragon.Api.Disable(GLEnum.Lighting);
+            RenderDragon.Api.Disable(GLEnum.DepthTest);
             _itemRenderer.renderItemIntoGUI(TextRenderer, TextureManager, stack, (int)(x + _translateX), (int)(y + _translateY));
         }
     }
@@ -338,22 +338,22 @@ public class UIRenderer(TextRenderer textRenderer, TextureManager textureManager
     {
         if (stack == null) return;
 
-        GLManager.GL.Disable(GLEnum.Lighting);
-        GLManager.GL.Disable(GLEnum.DepthTest);
+        RenderDragon.Api.Disable(GLEnum.Lighting);
+        RenderDragon.Api.Disable(GLEnum.DepthTest);
         _itemRenderer.renderItemOverlayIntoGUI(TextRenderer, TextureManager, stack, (int)(x + _translateX), (int)(y + _translateY));
     }
 
     public void DrawEntity(Entity entity, float x, float y, float scale, float mouseX, float mouseY)
     {
-        GLManager.GL.Enable(GLEnum.RescaleNormal);
-        GLManager.GL.Enable(GLEnum.ColorMaterial);
-        GLManager.GL.Enable(GLEnum.DepthTest);
-        GLManager.GL.PushMatrix();
-        GLManager.GL.Translate(x + _translateX, y + _translateY, 50.0F);
+        RenderDragon.Api.Enable(GLEnum.RescaleNormal);
+        RenderDragon.Api.Enable(GLEnum.ColorMaterial);
+        RenderDragon.Api.Enable(GLEnum.DepthTest);
+        RenderDragon.Api.PushMatrix();
+        RenderDragon.Api.Translate(x + _translateX, y + _translateY, 50.0F);
 
-        GLManager.GL.Scale(-scale, scale, scale);
-        GLManager.GL.Rotate(180.0F, 0.0F, 0.0F, 1.0F);
-        GLManager.GL.Disable(GLEnum.CullFace);
+        RenderDragon.Api.Scale(-scale, scale, scale);
+        RenderDragon.Api.Rotate(180.0F, 0.0F, 0.0F, 1.0F);
+        RenderDragon.Api.Disable(GLEnum.CullFace);
 
         float bodyYaw = entity is EntityLiving el ? el.BodyYaw : entity.Yaw;
         float headYaw = entity.Yaw;
@@ -361,10 +361,10 @@ public class UIRenderer(TextRenderer textRenderer, TextureManager textureManager
         float lookX = x + _translateX - mouseX;
         float lookY = y + _translateY - 50 - mouseY;
 
-        GLManager.GL.Rotate(135.0F, 0.0F, 1.0F, 0.0F);
+        RenderDragon.Api.Rotate(135.0F, 0.0F, 1.0F, 0.0F);
         Lighting.turnOn();
-        GLManager.GL.Rotate(-135.0F, 0.0F, 1.0F, 0.0F);
-        GLManager.GL.Rotate(-(float)Math.Atan(lookY / 40.0F) * 20.0F, 1.0F, 0.0F, 0.0F);
+        RenderDragon.Api.Rotate(-135.0F, 0.0F, 1.0F, 0.0F);
+        RenderDragon.Api.Rotate(-(float)Math.Atan(lookY / 40.0F) * 20.0F, 1.0F, 0.0F, 0.0F);
 
         if (entity is EntityLiving el2)
         {
@@ -374,7 +374,7 @@ public class UIRenderer(TextRenderer textRenderer, TextureManager textureManager
         entity.Pitch = -(float)Math.Atan(lookY / 40.0F) * 20.0F;
         entity.MinBrightness = 1.0F;
 
-        GLManager.GL.Translate(0.0F, entity.StandingEyeHeight, 0.0F);
+        RenderDragon.Api.Translate(0.0F, entity.StandingEyeHeight, 0.0F);
         EntityRenderDispatcher.Instance.PlayerViewY = 180.0F;
         EntityRenderDispatcher.Instance.RenderEntityWithPosYaw(entity, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F);
 
@@ -386,12 +386,12 @@ public class UIRenderer(TextRenderer textRenderer, TextureManager textureManager
         entity.Yaw = headYaw;
         entity.Pitch = headPitch;
 
-        GLManager.GL.PopMatrix();
+        RenderDragon.Api.PopMatrix();
         Lighting.turnOff();
-        GLManager.GL.Disable(GLEnum.CullFace);
-        GLManager.GL.Disable(GLEnum.DepthTest);
-        GLManager.GL.Disable(GLEnum.RescaleNormal);
-        GLManager.GL.Disable(GLEnum.ColorMaterial);
+        RenderDragon.Api.Disable(GLEnum.CullFace);
+        RenderDragon.Api.Disable(GLEnum.DepthTest);
+        RenderDragon.Api.Disable(GLEnum.RescaleNormal);
+        RenderDragon.Api.Disable(GLEnum.ColorMaterial);
     }
 
     private static void DrawRectRaw(int x1, int y1, int x2, int y2, Color color)
@@ -401,9 +401,9 @@ public class UIRenderer(TextRenderer textRenderer, TextureManager textureManager
 
         Tessellator tess = Tessellator.instance;
 
-        GLManager.GL.Enable(GLEnum.Blend);
-        GLManager.GL.Disable(GLEnum.Texture2D);
-        GLManager.GL.BlendFunc(GLEnum.SrcAlpha, GLEnum.OneMinusSrcAlpha);
+        RenderDragon.Api.Enable(GLEnum.Blend);
+        RenderDragon.Api.Disable(GLEnum.Texture2D);
+        RenderDragon.Api.BlendFunc(GLEnum.SrcAlpha, GLEnum.OneMinusSrcAlpha);
 
         tess.startDrawingQuads();
         tess.setColorRGBA(color);
@@ -413,16 +413,16 @@ public class UIRenderer(TextRenderer textRenderer, TextureManager textureManager
         tess.addVertex(x1, y1, 0.0D);
         tess.draw();
 
-        GLManager.GL.Enable(GLEnum.Texture2D);
+        RenderDragon.Api.Enable(GLEnum.Texture2D);
     }
 
     private static void DrawGradientRectRaw(int right, int bottom, int left, int top, Color topColor, Color bottomColor)
     {
-        GLManager.GL.Disable(GLEnum.Texture2D);
-        GLManager.GL.Enable(GLEnum.Blend);
-        GLManager.GL.Disable(GLEnum.AlphaTest);
-        GLManager.GL.BlendFunc(GLEnum.SrcAlpha, GLEnum.OneMinusSrcAlpha);
-        GLManager.GL.ShadeModel(GLEnum.Smooth);
+        RenderDragon.Api.Disable(GLEnum.Texture2D);
+        RenderDragon.Api.Enable(GLEnum.Blend);
+        RenderDragon.Api.Disable(GLEnum.AlphaTest);
+        RenderDragon.Api.BlendFunc(GLEnum.SrcAlpha, GLEnum.OneMinusSrcAlpha);
+        RenderDragon.Api.ShadeModel(GLEnum.Smooth);
 
         Tessellator tess = Tessellator.instance;
         tess.startDrawingQuads();
@@ -434,9 +434,9 @@ public class UIRenderer(TextRenderer textRenderer, TextureManager textureManager
         tess.addVertex(left, top, 0.0D);
         tess.draw();
 
-        GLManager.GL.ShadeModel(GLEnum.Flat);
-        GLManager.GL.Enable(GLEnum.AlphaTest);
-        GLManager.GL.Enable(GLEnum.Texture2D);
+        RenderDragon.Api.ShadeModel(GLEnum.Flat);
+        RenderDragon.Api.Enable(GLEnum.AlphaTest);
+        RenderDragon.Api.Enable(GLEnum.Texture2D);
     }
 
     private void DrawCenteredStringRaw(string text, int x, int y, Color color)
@@ -446,20 +446,20 @@ public class UIRenderer(TextRenderer textRenderer, TextureManager textureManager
 
     public void DrawSign(BlockEntitySign sign, float x, float y, float scale)
     {
-        GLManager.GL.Enable(GLEnum.RescaleNormal);
-        GLManager.GL.Enable(GLEnum.DepthTest);
-        GLManager.GL.PushMatrix();
-        GLManager.GL.Translate(x + _translateX, y + _translateY, 50.0F);
+        RenderDragon.Api.Enable(GLEnum.RescaleNormal);
+        RenderDragon.Api.Enable(GLEnum.DepthTest);
+        RenderDragon.Api.PushMatrix();
+        RenderDragon.Api.Translate(x + _translateX, y + _translateY, 50.0F);
 
-        GLManager.GL.Scale(-scale, -scale, -scale);
-        GLManager.GL.Rotate(180.0F, 0.0F, 1.0F, 0.0F);
+        RenderDragon.Api.Scale(-scale, -scale, -scale);
+        RenderDragon.Api.Rotate(180.0F, 0.0F, 1.0F, 0.0F);
 
         Block signBlock = sign.getBlock();
         if (signBlock == Block.Sign)
         {
             float rotation = sign.PushedBlockData * 360 / 16.0F;
-            GLManager.GL.Rotate(rotation, 0.0F, 1.0F, 0.0F);
-            GLManager.GL.Translate(0.0F, -1.0625F, 0.0F);
+            RenderDragon.Api.Rotate(rotation, 0.0F, 1.0F, 0.0F);
+            RenderDragon.Api.Translate(0.0F, -1.0625F, 0.0F);
         }
         else
         {
@@ -469,13 +469,13 @@ public class UIRenderer(TextRenderer textRenderer, TextureManager textureManager
             if (rotationIndex == 4) angle = 90.0F;
             if (rotationIndex == 5) angle = -90.0F;
 
-            GLManager.GL.Rotate(angle, 0.0F, 1.0F, 0.0F);
-            GLManager.GL.Translate(0.0F, -1.0625F, 0.0F);
+            RenderDragon.Api.Rotate(angle, 0.0F, 1.0F, 0.0F);
+            RenderDragon.Api.Translate(0.0F, -1.0625F, 0.0F);
         }
 
         BlockEntityRenderer.Instance.RenderTileEntityAt(sign, -0.5D, -0.75D, -0.5D, 0.0F);
-        GLManager.GL.PopMatrix();
-        GLManager.GL.Disable(GLEnum.DepthTest);
-        GLManager.GL.Disable(GLEnum.RescaleNormal);
+        RenderDragon.Api.PopMatrix();
+        RenderDragon.Api.Disable(GLEnum.DepthTest);
+        RenderDragon.Api.Disable(GLEnum.RescaleNormal);
     }
 }

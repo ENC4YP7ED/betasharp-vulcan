@@ -47,14 +47,14 @@ public class WorldRenderer : IWorldEventListener
         _textureManager = textureManager;
 
         _starGLCallList = GLAllocation.generateDisplayLists(3);
-        GLManager.GL.PushMatrix();
-        GLManager.GL.NewList((uint)_starGLCallList, GLEnum.Compile);
+        RenderDragon.Api.PushMatrix();
+        RenderDragon.Api.NewList((uint)_starGLCallList, GLEnum.Compile);
         RenderStars();
-        GLManager.GL.EndList();
-        GLManager.GL.PopMatrix();
+        RenderDragon.Api.EndList();
+        RenderDragon.Api.PopMatrix();
         Tessellator var4 = Tessellator.instance;
         _glSkyList = _starGLCallList + 1;
-        GLManager.GL.NewList((uint)_glSkyList, GLEnum.Compile);
+        RenderDragon.Api.NewList((uint)_glSkyList, GLEnum.Compile);
         byte var6 = 64;
         int var7 = 256 / var6 + 2;
         float var5 = 16.0F;
@@ -76,9 +76,9 @@ public class WorldRenderer : IWorldEventListener
             }
         }
 
-        GLManager.GL.EndList();
+        RenderDragon.Api.EndList();
         _glSkyList2 = _starGLCallList + 2;
-        GLManager.GL.NewList((uint)_glSkyList2, GLEnum.Compile);
+        RenderDragon.Api.NewList((uint)_glSkyList2, GLEnum.Compile);
         var5 = -16.0F;
         var4.startDrawingQuads();
 
@@ -94,7 +94,7 @@ public class WorldRenderer : IWorldEventListener
         }
 
         var4.draw();
-        GLManager.GL.EndList();
+        RenderDragon.Api.EndList();
         BuildCloudDisplayLists();
     }
 
@@ -320,7 +320,7 @@ public class WorldRenderer : IWorldEventListener
     {
         if (!_game.World.Dimension.IsNether)
         {
-            GLManager.GL.Disable(GLEnum.Texture2D);
+            RenderDragon.Api.Disable(GLEnum.Texture2D);
             Vector3D<double> var2 = _world.Environment.GetSkyColor(_game.Camera, var1);
             float var3 = (float)var2.X;
             float var4 = (float)var2.Y;
@@ -328,16 +328,16 @@ public class WorldRenderer : IWorldEventListener
             float var7;
             float var8;
 
-            GLManager.GL.Color3(var3, var4, var5);
+            RenderDragon.Api.Color3(var3, var4, var5);
             Tessellator var17 = Tessellator.instance;
-            GLManager.GL.DepthMask(false);
-            GLManager.GL.Enable(GLEnum.Fog);
-            GLManager.GL.Color3(var3, var4, var5);
-            GLManager.GL.CallList((uint)_glSkyList);
-            GLManager.GL.Disable(GLEnum.Fog);
-            GLManager.GL.Disable(GLEnum.AlphaTest);
-            GLManager.GL.Enable(GLEnum.Blend);
-            GLManager.GL.BlendFunc(GLEnum.SrcAlpha, GLEnum.OneMinusSrcAlpha);
+            RenderDragon.Api.DepthMask(false);
+            RenderDragon.Api.Enable(GLEnum.Fog);
+            RenderDragon.Api.Color3(var3, var4, var5);
+            RenderDragon.Api.CallList((uint)_glSkyList);
+            RenderDragon.Api.Disable(GLEnum.Fog);
+            RenderDragon.Api.Disable(GLEnum.AlphaTest);
+            RenderDragon.Api.Enable(GLEnum.Blend);
+            RenderDragon.Api.BlendFunc(GLEnum.SrcAlpha, GLEnum.OneMinusSrcAlpha);
             Lighting.turnOff();
             float[] var18 = _world.Dimension.GetBackgroundColor(_world.GetTime(var1), var1);
             float var9;
@@ -346,12 +346,12 @@ public class WorldRenderer : IWorldEventListener
             float var12;
             if (var18 != null)
             {
-                GLManager.GL.Disable(GLEnum.Texture2D);
-                GLManager.GL.ShadeModel(GLEnum.Smooth);
-                GLManager.GL.PushMatrix();
-                GLManager.GL.Rotate(90.0F, 1.0F, 0.0F, 0.0F);
+                RenderDragon.Api.Disable(GLEnum.Texture2D);
+                RenderDragon.Api.ShadeModel(GLEnum.Smooth);
+                RenderDragon.Api.PushMatrix();
+                RenderDragon.Api.Rotate(90.0F, 1.0F, 0.0F, 0.0F);
                 var8 = _world.GetTime(var1);
-                GLManager.GL.Rotate(var8 > 0.5F ? 180.0F : 0.0F, 0.0F, 0.0F, 1.0F);
+                RenderDragon.Api.Rotate(var8 > 0.5F ? 180.0F : 0.0F, 0.0F, 0.0F, 1.0F);
                 var9 = var18[0];
                 var10 = var18[1];
                 var11 = var18[2];
@@ -372,21 +372,21 @@ public class WorldRenderer : IWorldEventListener
                 }
 
                 var17.draw();
-                GLManager.GL.PopMatrix();
-                GLManager.GL.ShadeModel(GLEnum.Flat);
+                RenderDragon.Api.PopMatrix();
+                RenderDragon.Api.ShadeModel(GLEnum.Flat);
             }
 
-            GLManager.GL.Enable(GLEnum.Texture2D);
-            GLManager.GL.BlendFunc(GLEnum.SrcAlpha, GLEnum.One);
-            GLManager.GL.PushMatrix();
+            RenderDragon.Api.Enable(GLEnum.Texture2D);
+            RenderDragon.Api.BlendFunc(GLEnum.SrcAlpha, GLEnum.One);
+            RenderDragon.Api.PushMatrix();
             var7 = 1.0F - _world.Environment.GetRainGradient(var1);
             var8 = 0.0F;
             var9 = 0.0F;
             var10 = 0.0F;
-            GLManager.GL.Color4(1.0F, 1.0F, 1.0F, var7);
-            GLManager.GL.Translate(var8, var9, var10);
-            GLManager.GL.Rotate(0.0F, 0.0F, 0.0F, 1.0F);
-            GLManager.GL.Rotate(_world.GetTime(var1) * 360.0F, 1.0F, 0.0F, 0.0F);
+            RenderDragon.Api.Color4(1.0F, 1.0F, 1.0F, var7);
+            RenderDragon.Api.Translate(var8, var9, var10);
+            RenderDragon.Api.Rotate(0.0F, 0.0F, 0.0F, 1.0F);
+            RenderDragon.Api.Rotate(_world.GetTime(var1) * 360.0F, 1.0F, 0.0F, 0.0F);
             var11 = 30.0F;
             _textureManager.BindTexture(_textureManager.GetTextureId("/terrain/sun.png"));
             var17.startDrawingQuads();
@@ -403,32 +403,32 @@ public class WorldRenderer : IWorldEventListener
             var17.addVertexWithUV((double)var11, -100.0D, (double)-var11, 0.0D, 0.0D);
             var17.addVertexWithUV((double)-var11, -100.0D, (double)-var11, 1.0D, 0.0D);
             var17.draw();
-            GLManager.GL.Disable(GLEnum.Texture2D);
+            RenderDragon.Api.Disable(GLEnum.Texture2D);
             var12 = _world.CalculateSkyLightIntensity(var1) * var7;
             if (var12 > 0.0F)
             {
-                GLManager.GL.Color4(var12, var12, var12, var12);
-                GLManager.GL.CallList((uint)_starGLCallList);
+                RenderDragon.Api.Color4(var12, var12, var12, var12);
+                RenderDragon.Api.CallList((uint)_starGLCallList);
             }
 
-            GLManager.GL.Color4(1.0F, 1.0F, 1.0F, 1.0F);
-            GLManager.GL.Disable(GLEnum.Blend);
-            GLManager.GL.Enable(GLEnum.AlphaTest);
-            GLManager.GL.Enable(GLEnum.Fog);
-            GLManager.GL.PopMatrix();
+            RenderDragon.Api.Color4(1.0F, 1.0F, 1.0F, 1.0F);
+            RenderDragon.Api.Disable(GLEnum.Blend);
+            RenderDragon.Api.Enable(GLEnum.AlphaTest);
+            RenderDragon.Api.Enable(GLEnum.Fog);
+            RenderDragon.Api.PopMatrix();
             if (_world.Dimension.HasGround)
             {
-                GLManager.GL.Color3(var3 * 0.2F + 0.04F, var4 * 0.2F + 0.04F, var5 * 0.6F + 0.1F);
+                RenderDragon.Api.Color3(var3 * 0.2F + 0.04F, var4 * 0.2F + 0.04F, var5 * 0.6F + 0.1F);
             }
             else
             {
-                GLManager.GL.Color3(var3, var4, var5);
+                RenderDragon.Api.Color3(var3, var4, var5);
             }
 
-            GLManager.GL.Disable(GLEnum.Texture2D);
-            GLManager.GL.CallList((uint)_glSkyList2);
-            GLManager.GL.Enable(GLEnum.Texture2D);
-            GLManager.GL.DepthMask(true);
+            RenderDragon.Api.Disable(GLEnum.Texture2D);
+            RenderDragon.Api.CallList((uint)_glSkyList2);
+            RenderDragon.Api.Enable(GLEnum.Texture2D);
+            RenderDragon.Api.DepthMask(true);
         }
     }
 
@@ -450,7 +450,7 @@ public class WorldRenderer : IWorldEventListener
 
         for (int i = 0; i < 4; ++i)
         {
-            GLManager.GL.NewList((uint)(_glCloudsList + i), GLEnum.Compile);
+            RenderDragon.Api.NewList((uint)(_glCloudsList + i), GLEnum.Compile);
             tessellator.startDrawingQuads();
             float cloudHeight = 4.0F;
             float uvScale = 1.0F / 256.0F;
@@ -539,13 +539,13 @@ public class WorldRenderer : IWorldEventListener
                 }
             }
             tessellator.draw();
-            GLManager.GL.EndList();
+            RenderDragon.Api.EndList();
         }
     }
 
     private void RenderCloudsFancy(float var1)
     {
-        GLManager.GL.Disable(GLEnum.CullFace);
+        RenderDragon.Api.Disable(GLEnum.CullFace);
         float var2 = (float)(_game.Camera.LastTickY + (_game.Camera.Y - _game.Camera.LastTickY) * (double)var1);
         float var4 = 12.0F;
         float var5 = 4.0F;
@@ -557,8 +557,8 @@ public class WorldRenderer : IWorldEventListener
         var6 -= var11 * 2048;
         var8 -= var12 * 2048;
         _textureManager.BindTexture(_textureManager.GetTextureId("/environment/clouds.png"));
-        GLManager.GL.Enable(GLEnum.Blend);
-        GLManager.GL.BlendFunc(GLEnum.SrcAlpha, GLEnum.OneMinusSrcAlpha);
+        RenderDragon.Api.Enable(GLEnum.Blend);
+        RenderDragon.Api.BlendFunc(GLEnum.SrcAlpha, GLEnum.OneMinusSrcAlpha);
         Vector3D<double> var13 = _world.Environment.GetCloudColor(var1);
         float var14 = (float)var13.X;
         float var15 = (float)var13.Y;
@@ -570,55 +570,55 @@ public class WorldRenderer : IWorldEventListener
         float var20 = (float)(var6 - MathHelper.Floor(var6));
         float var21 = (float)(var8 - MathHelper.Floor(var8));
 
-        GLManager.GL.Scale(var4, 1.0F, var4);
+        RenderDragon.Api.Scale(var4, 1.0F, var4);
 
         for (int var25 = 0; var25 < 2; ++var25)
         {
             if (var25 == 0)
             {
-                GLManager.GL.ColorMask(false, false, false, false);
+                RenderDragon.Api.ColorMask(false, false, false, false);
             }
             else
             {
-                GLManager.GL.ColorMask(true, true, true, true);
+                RenderDragon.Api.ColorMask(true, true, true, true);
             }
 
-            GLManager.GL.PushMatrix();
-            GLManager.GL.Translate(-var20, var10, -var21);
+            RenderDragon.Api.PushMatrix();
+            RenderDragon.Api.Translate(-var20, var10, -var21);
 
-            GLManager.GL.MatrixMode(GLEnum.Texture);
-            GLManager.GL.PushMatrix();
-            GLManager.GL.Translate(var17, var18, 0.0F);
-            GLManager.GL.MatrixMode(GLEnum.Modelview);
+            RenderDragon.Api.MatrixMode(GLEnum.Texture);
+            RenderDragon.Api.PushMatrix();
+            RenderDragon.Api.Translate(var17, var18, 0.0F);
+            RenderDragon.Api.MatrixMode(GLEnum.Modelview);
 
             if (var10 > -var5 - 1.0F)
             {
-                GLManager.GL.Color4(var14 * 0.7F, var15 * 0.7F, var16 * 0.7F, 0.8F);
-                GLManager.GL.CallList((uint)(_glCloudsList + 0)); // Bottom
+                RenderDragon.Api.Color4(var14 * 0.7F, var15 * 0.7F, var16 * 0.7F, 0.8F);
+                RenderDragon.Api.CallList((uint)(_glCloudsList + 0)); // Bottom
             }
 
             if (var10 <= var5 + 1.0F)
             {
-                GLManager.GL.Color4(var14, var15, var16, 0.8F);
-                GLManager.GL.CallList((uint)(_glCloudsList + 1)); // Top
+                RenderDragon.Api.Color4(var14, var15, var16, 0.8F);
+                RenderDragon.Api.CallList((uint)(_glCloudsList + 1)); // Top
             }
 
-            GLManager.GL.Color4(var14 * 0.9F, var15 * 0.9F, var16 * 0.9F, 0.8F);
-            GLManager.GL.CallList((uint)(_glCloudsList + 2)); // Side X
+            RenderDragon.Api.Color4(var14 * 0.9F, var15 * 0.9F, var16 * 0.9F, 0.8F);
+            RenderDragon.Api.CallList((uint)(_glCloudsList + 2)); // Side X
 
-            GLManager.GL.Color4(var14 * 0.8F, var15 * 0.8F, var16 * 0.8F, 0.8F);
-            GLManager.GL.CallList((uint)(_glCloudsList + 3)); // Side Z
+            RenderDragon.Api.Color4(var14 * 0.8F, var15 * 0.8F, var16 * 0.8F, 0.8F);
+            RenderDragon.Api.CallList((uint)(_glCloudsList + 3)); // Side Z
 
-            GLManager.GL.MatrixMode(GLEnum.Texture);
-            GLManager.GL.PopMatrix();
-            GLManager.GL.MatrixMode(GLEnum.Modelview);
+            RenderDragon.Api.MatrixMode(GLEnum.Texture);
+            RenderDragon.Api.PopMatrix();
+            RenderDragon.Api.MatrixMode(GLEnum.Modelview);
 
-            GLManager.GL.PopMatrix();
+            RenderDragon.Api.PopMatrix();
         }
 
-        GLManager.GL.Color4(1.0F, 1.0F, 1.0F, 1.0F);
-        GLManager.GL.Disable(GLEnum.Blend);
-        GLManager.GL.Enable(GLEnum.CullFace);
+        RenderDragon.Api.Color4(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderDragon.Api.Disable(GLEnum.Blend);
+        RenderDragon.Api.Enable(GLEnum.CullFace);
     }
 
     public void DrawBlockBreaking(EntityPlayer entityPlayer, HitResult hit, ItemStack itemStack, float tickDelta)
@@ -627,14 +627,14 @@ public class WorldRenderer : IWorldEventListener
 
         Tessellator tessellator = Tessellator.instance;
 
-        GLManager.GL.PushMatrix();
-        GLManager.GL.Enable(GLEnum.Blend);
-        GLManager.GL.Enable(GLEnum.AlphaTest);
-        GLManager.GL.Enable(GLEnum.PolygonOffsetFill);
+        RenderDragon.Api.PushMatrix();
+        RenderDragon.Api.Enable(GLEnum.Blend);
+        RenderDragon.Api.Enable(GLEnum.AlphaTest);
+        RenderDragon.Api.Enable(GLEnum.PolygonOffsetFill);
 
-        GLManager.GL.BlendFunc(GLEnum.DstColor, GLEnum.SrcColor);
-        GLManager.GL.Color4(1.0F, 1.0F, 1.0F, 0.5F);
-        GLManager.GL.PolygonOffset(-3.0F, -50.0F);
+        RenderDragon.Api.BlendFunc(GLEnum.DstColor, GLEnum.SrcColor);
+        RenderDragon.Api.Color4(1.0F, 1.0F, 1.0F, 0.5F);
+        RenderDragon.Api.PolygonOffset(-3.0F, -50.0F);
 
         _textureManager.BindTexture(_textureManager.GetTextureId("/terrain.png"));
 
@@ -653,26 +653,26 @@ public class WorldRenderer : IWorldEventListener
         tessellator.draw();
 
         tessellator.setTranslationD(0.0D, 0.0D, 0.0D);
-        GLManager.GL.PolygonOffset(0.0F, 0.0F);
-        GLManager.GL.Color4(1.0F, 1.0F, 1.0F, 1.0F);
-        GLManager.GL.BlendFunc(GLEnum.SrcAlpha, GLEnum.OneMinusSrcAlpha);
+        RenderDragon.Api.PolygonOffset(0.0F, 0.0F);
+        RenderDragon.Api.Color4(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderDragon.Api.BlendFunc(GLEnum.SrcAlpha, GLEnum.OneMinusSrcAlpha);
 
-        GLManager.GL.Disable(GLEnum.PolygonOffsetFill);
-        GLManager.GL.Disable(GLEnum.AlphaTest);
-        GLManager.GL.Disable(GLEnum.Blend);
-        GLManager.GL.PopMatrix();
+        RenderDragon.Api.Disable(GLEnum.PolygonOffsetFill);
+        RenderDragon.Api.Disable(GLEnum.AlphaTest);
+        RenderDragon.Api.Disable(GLEnum.Blend);
+        RenderDragon.Api.PopMatrix();
     }
 
     public void DrawSelectionBox(EntityPlayer var1, HitResult var2, int var3, ItemStack var4, float var5)
     {
         if (var3 == 0 && var2.Type == HitResultType.TILE)
         {
-            GLManager.GL.Enable(GLEnum.Blend);
-            GLManager.GL.BlendFunc(GLEnum.SrcAlpha, GLEnum.OneMinusSrcAlpha);
-            GLManager.GL.Color4(0.0F, 0.0F, 0.0F, 0.4F);
-            GLManager.GL.LineWidth(2.0F);
-            GLManager.GL.Disable(GLEnum.Texture2D);
-            GLManager.GL.DepthMask(false);
+            RenderDragon.Api.Enable(GLEnum.Blend);
+            RenderDragon.Api.BlendFunc(GLEnum.SrcAlpha, GLEnum.OneMinusSrcAlpha);
+            RenderDragon.Api.Color4(0.0F, 0.0F, 0.0F, 0.4F);
+            RenderDragon.Api.LineWidth(2.0F);
+            RenderDragon.Api.Disable(GLEnum.Texture2D);
+            RenderDragon.Api.DepthMask(false);
             float var6 = 0.002F;
             int var7 = _world.Reader.GetBlockId(var2.BlockX, var2.BlockY, var2.BlockZ);
             if (var7 > 0)
@@ -684,9 +684,9 @@ public class WorldRenderer : IWorldEventListener
                 DrawOutlinedBoundingBox(Block.Blocks[var7].getBoundingBox(_world.Reader, _world.Entities, var2.BlockX, var2.BlockY, var2.BlockZ).Expand((double)var6, (double)var6, (double)var6).Offset(-var8, -var10, -var12));
             }
 
-            GLManager.GL.DepthMask(true);
-            GLManager.GL.Enable(GLEnum.Texture2D);
-            GLManager.GL.Disable(GLEnum.Blend);
+            RenderDragon.Api.DepthMask(true);
+            RenderDragon.Api.Enable(GLEnum.Texture2D);
+            RenderDragon.Api.Disable(GLEnum.Blend);
         }
 
     }

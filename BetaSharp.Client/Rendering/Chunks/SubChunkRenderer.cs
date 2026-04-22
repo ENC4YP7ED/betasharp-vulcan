@@ -108,7 +108,7 @@ public class SubChunkRenderer : IDisposable
     {
         if (buffers[bufferIdx] == null)
         {
-            buffers[bufferIdx] = new(meshData);
+            buffers[bufferIdx] = RenderDragon.CreateVertexBuffer(meshData);
         }
         else
         {
@@ -119,14 +119,14 @@ public class SubChunkRenderer : IDisposable
 
         if (vertexArrays[bufferIdx] == null)
         {
-            vertexArrays[bufferIdx] = new();
+            vertexArrays[bufferIdx] = RenderDragon.CreateVertexArray();
             vertexArrays[bufferIdx].Bind();
             buffers[bufferIdx].Bind();
 
             const uint stride = 16;
 
-            GLManager.GL.EnableVertexAttribArray(0);
-            GLManager.GL.VertexAttribPointer(
+            RenderDragon.Api.EnableVertexAttribArray(0);
+            RenderDragon.Api.VertexAttribPointer(
                 0,
                 3,
                 GLEnum.Short,
@@ -135,8 +135,8 @@ public class SubChunkRenderer : IDisposable
                 (void*)4
             );
 
-            GLManager.GL.EnableVertexAttribArray(1);
-            GLManager.GL.VertexAttribIPointer(
+            RenderDragon.Api.EnableVertexAttribArray(1);
+            RenderDragon.Api.VertexAttribIPointer(
                 1,
                 2,
                 GLEnum.UnsignedShort,
@@ -144,8 +144,8 @@ public class SubChunkRenderer : IDisposable
                 (void*)10
             );
 
-            GLManager.GL.EnableVertexAttribArray(2);
-            GLManager.GL.VertexAttribPointer(
+            RenderDragon.Api.EnableVertexAttribArray(2);
+            RenderDragon.Api.VertexAttribPointer(
                 2,
                 4,
                 GLEnum.UnsignedByte,
@@ -154,8 +154,8 @@ public class SubChunkRenderer : IDisposable
                 (void*)0
             );
 
-            GLManager.GL.EnableVertexAttribArray(3);
-            GLManager.GL.VertexAttribIPointer(
+            RenderDragon.Api.EnableVertexAttribArray(3);
+            RenderDragon.Api.VertexAttribIPointer(
                 3,
                 1,
                 GLEnum.UnsignedByte,
@@ -197,7 +197,7 @@ public class SubChunkRenderer : IDisposable
 
         vertexArrays[pass].Bind();
 
-        GLManager.GL.DrawArrays(GLEnum.Triangles, 0, (uint)vertexCount);
+        RenderDragon.Api.DrawArrays(GLEnum.Triangles, 0, (uint)vertexCount);
     }
 
     public void Dispose()

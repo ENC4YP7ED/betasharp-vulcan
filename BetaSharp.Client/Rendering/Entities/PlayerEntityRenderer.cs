@@ -90,19 +90,19 @@ public class PlayerEntityRenderer : LivingEntityRenderer
                 else
                 {
                     TextRenderer var13 = TextRenderer;
-                    GLManager.GL.PushMatrix();
-                    GLManager.GL.Translate((float)var2 + 0.0F, (float)var4 + 2.3F, (float)var6);
-                    GLManager.GL.Normal3(0.0F, 1.0F, 0.0F);
-                    GLManager.GL.Rotate(-Dispatcher.PlayerViewY, 0.0F, 1.0F, 0.0F);
-                    GLManager.GL.Rotate(Dispatcher.PlayerViewX, 1.0F, 0.0F, 0.0F);
-                    GLManager.GL.Scale(-var9, -var9, var9);
-                    GLManager.GL.Disable(GLEnum.Lighting);
-                    GLManager.GL.Translate(0.0F, 0.25F / var9, 0.0F);
-                    GLManager.GL.DepthMask(false);
-                    GLManager.GL.Enable(GLEnum.Blend);
-                    GLManager.GL.BlendFunc(GLEnum.SrcAlpha, GLEnum.OneMinusSrcAlpha);
+                    RenderDragon.Api.PushMatrix();
+                    RenderDragon.Api.Translate((float)var2 + 0.0F, (float)var4 + 2.3F, (float)var6);
+                    RenderDragon.Api.Normal3(0.0F, 1.0F, 0.0F);
+                    RenderDragon.Api.Rotate(-Dispatcher.PlayerViewY, 0.0F, 1.0F, 0.0F);
+                    RenderDragon.Api.Rotate(Dispatcher.PlayerViewX, 1.0F, 0.0F, 0.0F);
+                    RenderDragon.Api.Scale(-var9, -var9, var9);
+                    RenderDragon.Api.Disable(GLEnum.Lighting);
+                    RenderDragon.Api.Translate(0.0F, 0.25F / var9, 0.0F);
+                    RenderDragon.Api.DepthMask(false);
+                    RenderDragon.Api.Enable(GLEnum.Blend);
+                    RenderDragon.Api.BlendFunc(GLEnum.SrcAlpha, GLEnum.OneMinusSrcAlpha);
                     Tessellator var14 = Tessellator.instance;
-                    GLManager.GL.Disable(GLEnum.Texture2D);
+                    RenderDragon.Api.Disable(GLEnum.Texture2D);
                     var14.startDrawingQuads();
                     int var15 = var13.GetStringWidth(var12) / 2;
                     var14.setColorRGBA_F(0.0F, 0.0F, 0.0F, 0.25F);
@@ -111,13 +111,13 @@ public class PlayerEntityRenderer : LivingEntityRenderer
                     var14.addVertex(var15 + 1, 8.0D, 0.0D);
                     var14.addVertex(var15 + 1, -1.0D, 0.0D);
                     var14.draw();
-                    GLManager.GL.Enable(GLEnum.Texture2D);
-                    GLManager.GL.DepthMask(true);
+                    RenderDragon.Api.Enable(GLEnum.Texture2D);
+                    RenderDragon.Api.DepthMask(true);
                     var13.DrawString(var12, -var13.GetStringWidth(var12) / 2, 0, Color.WhiteAlpha20);
-                    GLManager.GL.Enable(GLEnum.Lighting);
-                    GLManager.GL.Disable(GLEnum.Blend);
-                    GLManager.GL.Color4(1.0F, 1.0F, 1.0F, 1.0F);
-                    GLManager.GL.PopMatrix();
+                    RenderDragon.Api.Enable(GLEnum.Lighting);
+                    RenderDragon.Api.Disable(GLEnum.Blend);
+                    RenderDragon.Api.Color4(1.0F, 1.0F, 1.0F, 1.0F);
+                    RenderDragon.Api.PopMatrix();
                 }
             }
         }
@@ -129,18 +129,18 @@ public class PlayerEntityRenderer : LivingEntityRenderer
         ItemStack var3 = var1.inventory.ArmorItemBySlot(3);
         if (var3 != null && var3.getItem().id < 256)
         {
-            GLManager.GL.PushMatrix();
+            RenderDragon.Api.PushMatrix();
             _modelBipedMain.bipedHead.transform(1.0F / 16.0F);
             if (BlockRenderer.IsSideLit(Block.Blocks[var3.ItemId].getRenderType()))
             {
                 float var4 = 10.0F / 16.0F;
-                GLManager.GL.Translate(0.0F, -0.25F, 0.0F);
-                GLManager.GL.Rotate(180.0F, 0.0F, 1.0F, 0.0F);
-                GLManager.GL.Scale(var4, -var4, var4);
+                RenderDragon.Api.Translate(0.0F, -0.25F, 0.0F);
+                RenderDragon.Api.Rotate(180.0F, 0.0F, 1.0F, 0.0F);
+                RenderDragon.Api.Scale(var4, -var4, var4);
             }
 
             Dispatcher.HeldItemRenderer.renderItem(var1, var3);
-            GLManager.GL.PopMatrix();
+            RenderDragon.Api.PopMatrix();
         }
 
         float var5;
@@ -150,24 +150,24 @@ public class PlayerEntityRenderer : LivingEntityRenderer
             {
                 var5 = var1.PrevYaw + (var1.Yaw - var1.PrevYaw) * var2 - (var1.LastBodyYaw + (var1.BodyYaw - var1.LastBodyYaw) * var2);
                 float var6 = var1.PrevPitch + (var1.Pitch - var1.PrevPitch) * var2;
-                GLManager.GL.PushMatrix();
-                GLManager.GL.Rotate(var5, 0.0F, 1.0F, 0.0F);
-                GLManager.GL.Rotate(var6, 1.0F, 0.0F, 0.0F);
-                GLManager.GL.Translate(6.0F / 16.0F * (var19 * 2 - 1), 0.0F, 0.0F);
-                GLManager.GL.Translate(0.0F, -(6.0F / 16.0F), 0.0F);
-                GLManager.GL.Rotate(-var6, 1.0F, 0.0F, 0.0F);
-                GLManager.GL.Rotate(-var5, 0.0F, 1.0F, 0.0F);
+                RenderDragon.Api.PushMatrix();
+                RenderDragon.Api.Rotate(var5, 0.0F, 1.0F, 0.0F);
+                RenderDragon.Api.Rotate(var6, 1.0F, 0.0F, 0.0F);
+                RenderDragon.Api.Translate(6.0F / 16.0F * (var19 * 2 - 1), 0.0F, 0.0F);
+                RenderDragon.Api.Translate(0.0F, -(6.0F / 16.0F), 0.0F);
+                RenderDragon.Api.Rotate(-var6, 1.0F, 0.0F, 0.0F);
+                RenderDragon.Api.Rotate(-var5, 0.0F, 1.0F, 0.0F);
                 float var7 = 4.0F / 3.0F;
-                GLManager.GL.Scale(var7, var7, var7);
+                RenderDragon.Api.Scale(var7, var7, var7);
                 _modelBipedMain.renderEars(1.0F / 16.0F);
-                GLManager.GL.PopMatrix();
+                RenderDragon.Api.PopMatrix();
             }
         }
 
         if (LoadDownloadableImageTexture(var1.playerCloakUrl, null))
         {
-            GLManager.GL.PushMatrix();
-            GLManager.GL.Translate(0.0F, 0.0F, 2.0F / 16.0F);
+            RenderDragon.Api.PushMatrix();
+            RenderDragon.Api.Translate(0.0F, 0.0F, 2.0F / 16.0F);
             double var20 = var1.prevCapeX + (var1.capeX - var1.prevCapeX) * (double)var2 - (var1.PrevX + (var1.X - var1.PrevX) * (double)var2);
             double var22 = var1.prevCapeY + (var1.capeY - var1.prevCapeY) * (double)var2 - (var1.PrevY + (var1.Y - var1.PrevY) * (double)var2);
             double var8 = var1.prevCapeZ + (var1.capeZ - var1.prevCapeZ) * (double)var2 - (var1.PrevZ + (var1.Z - var1.PrevZ) * (double)var2);
@@ -199,20 +199,20 @@ public class PlayerEntityRenderer : LivingEntityRenderer
                 var15 += 25.0F;
             }
 
-            GLManager.GL.Rotate(6.0F + var16 / 2.0F + var15, 1.0F, 0.0F, 0.0F);
-            GLManager.GL.Rotate(var17 / 2.0F, 0.0F, 0.0F, 1.0F);
-            GLManager.GL.Rotate(-var17 / 2.0F, 0.0F, 1.0F, 0.0F);
-            GLManager.GL.Rotate(180.0F, 0.0F, 1.0F, 0.0F);
+            RenderDragon.Api.Rotate(6.0F + var16 / 2.0F + var15, 1.0F, 0.0F, 0.0F);
+            RenderDragon.Api.Rotate(var17 / 2.0F, 0.0F, 0.0F, 1.0F);
+            RenderDragon.Api.Rotate(-var17 / 2.0F, 0.0F, 1.0F, 0.0F);
+            RenderDragon.Api.Rotate(180.0F, 0.0F, 1.0F, 0.0F);
             _modelBipedMain.renderCloak(1.0F / 16.0F);
-            GLManager.GL.PopMatrix();
+            RenderDragon.Api.PopMatrix();
         }
 
         ItemStack var21 = var1.inventory.GetItemInHand();
         if (var21 != null)
         {
-            GLManager.GL.PushMatrix();
+            RenderDragon.Api.PushMatrix();
             _modelBipedMain.bipedRightArm.transform(1.0F / 16.0F);
-            GLManager.GL.Translate(-(1.0F / 16.0F), 7.0F / 16.0F, 1.0F / 16.0F);
+            RenderDragon.Api.Translate(-(1.0F / 16.0F), 7.0F / 16.0F, 1.0F / 16.0F);
             if (var1.fishHook != null)
             {
                 var21 = new ItemStack(Item.Stick);
@@ -221,38 +221,38 @@ public class PlayerEntityRenderer : LivingEntityRenderer
             if (var21.ItemId < 256 && BlockRenderer.IsSideLit(Block.Blocks[var21.ItemId].getRenderType()))
             {
                 var5 = 0.5F;
-                GLManager.GL.Translate(0.0F, 3.0F / 16.0F, -(5.0F / 16.0F));
+                RenderDragon.Api.Translate(0.0F, 3.0F / 16.0F, -(5.0F / 16.0F));
                 var5 *= 12.0F / 16.0F;
-                GLManager.GL.Rotate(20.0F, 1.0F, 0.0F, 0.0F);
-                GLManager.GL.Rotate(45.0F, 0.0F, 1.0F, 0.0F);
-                GLManager.GL.Scale(var5, -var5, var5);
+                RenderDragon.Api.Rotate(20.0F, 1.0F, 0.0F, 0.0F);
+                RenderDragon.Api.Rotate(45.0F, 0.0F, 1.0F, 0.0F);
+                RenderDragon.Api.Scale(var5, -var5, var5);
             }
             else if (Item.ITEMS[var21.ItemId].isHandheld())
             {
                 var5 = 10.0F / 16.0F;
                 if (Item.ITEMS[var21.ItemId].isHandheldRod())
                 {
-                    GLManager.GL.Rotate(180.0F, 0.0F, 0.0F, 1.0F);
-                    GLManager.GL.Translate(0.0F, -(2.0F / 16.0F), 0.0F);
+                    RenderDragon.Api.Rotate(180.0F, 0.0F, 0.0F, 1.0F);
+                    RenderDragon.Api.Translate(0.0F, -(2.0F / 16.0F), 0.0F);
                 }
 
-                GLManager.GL.Translate(0.0F, 3.0F / 16.0F, 0.0F);
-                GLManager.GL.Scale(var5, -var5, var5);
-                GLManager.GL.Rotate(-100.0F, 1.0F, 0.0F, 0.0F);
-                GLManager.GL.Rotate(45.0F, 0.0F, 1.0F, 0.0F);
+                RenderDragon.Api.Translate(0.0F, 3.0F / 16.0F, 0.0F);
+                RenderDragon.Api.Scale(var5, -var5, var5);
+                RenderDragon.Api.Rotate(-100.0F, 1.0F, 0.0F, 0.0F);
+                RenderDragon.Api.Rotate(45.0F, 0.0F, 1.0F, 0.0F);
             }
             else
             {
                 var5 = 6.0F / 16.0F;
-                GLManager.GL.Translate(0.25F, 3.0F / 16.0F, -(3.0F / 16.0F));
-                GLManager.GL.Scale(var5, var5, var5);
-                GLManager.GL.Rotate(60.0F, 0.0F, 0.0F, 1.0F);
-                GLManager.GL.Rotate(-90.0F, 1.0F, 0.0F, 0.0F);
-                GLManager.GL.Rotate(20.0F, 0.0F, 0.0F, 1.0F);
+                RenderDragon.Api.Translate(0.25F, 3.0F / 16.0F, -(3.0F / 16.0F));
+                RenderDragon.Api.Scale(var5, var5, var5);
+                RenderDragon.Api.Rotate(60.0F, 0.0F, 0.0F, 1.0F);
+                RenderDragon.Api.Rotate(-90.0F, 1.0F, 0.0F, 0.0F);
+                RenderDragon.Api.Rotate(20.0F, 0.0F, 0.0F, 1.0F);
             }
 
             Dispatcher.HeldItemRenderer.renderItem(var1, var21);
-            GLManager.GL.PopMatrix();
+            RenderDragon.Api.PopMatrix();
         }
 
     }
@@ -260,7 +260,7 @@ public class PlayerEntityRenderer : LivingEntityRenderer
     protected void func_186_b(EntityPlayer var1, float var2)
     {
         float var3 = 15.0F / 16.0F;
-        GLManager.GL.Scale(var3, var3, var3);
+        RenderDragon.Api.Scale(var3, var3, var3);
     }
 
     public void DrawFirstPersonHand()
@@ -287,9 +287,9 @@ public class PlayerEntityRenderer : LivingEntityRenderer
     {
         if (var1.IsAlive() && var1.isSleeping())
         {
-            GLManager.GL.Rotate(var1.getSleepingRotation(), 0.0F, 1.0F, 0.0F);
-            GLManager.GL.Rotate(getDeathMaxRotation(var1), 0.0F, 0.0F, 1.0F);
-            GLManager.GL.Rotate(270.0F, 0.0F, 1.0F, 0.0F);
+            RenderDragon.Api.Rotate(var1.getSleepingRotation(), 0.0F, 1.0F, 0.0F);
+            RenderDragon.Api.Rotate(getDeathMaxRotation(var1), 0.0F, 0.0F, 1.0F);
+            RenderDragon.Api.Rotate(270.0F, 0.0F, 1.0F, 0.0F);
         }
         else
         {

@@ -14,14 +14,14 @@ public class BlockEntitySignRenderer : BlockEntitySpecialRenderer
     public void renderTileEntitySignAt(BlockEntitySign var1, double var2, double var4, double var6, float var8)
     {
         Block var9 = var1.getBlock();
-        GLManager.GL.PushMatrix();
+        RenderDragon.Api.PushMatrix();
         float var10 = 2.0F / 3.0F;
         float var12;
         if (var9 == Block.Sign)
         {
-            GLManager.GL.Translate((float)var2 + 0.5F, (float)var4 + 12.0F / 16.0F * var10, (float)var6 + 0.5F);
+            RenderDragon.Api.Translate((float)var2 + 0.5F, (float)var4 + 12.0F / 16.0F * var10, (float)var6 + 0.5F);
             float var11 = var1.PushedBlockData * 360 / 16.0F;
-            GLManager.GL.Rotate(-var11, 0.0F, 1.0F, 0.0F);
+            RenderDragon.Api.Rotate(-var11, 0.0F, 1.0F, 0.0F);
             signModel.signStick.visible = true;
         }
         else
@@ -43,23 +43,23 @@ public class BlockEntitySignRenderer : BlockEntitySpecialRenderer
                 var12 = -90.0F;
             }
 
-            GLManager.GL.Translate((float)var2 + 0.5F, (float)var4 + 12.0F / 16.0F * var10, (float)var6 + 0.5F);
-            GLManager.GL.Rotate(-var12, 0.0F, 1.0F, 0.0F);
-            GLManager.GL.Translate(0.0F, -(5.0F / 16.0F), -(7.0F / 16.0F));
+            RenderDragon.Api.Translate((float)var2 + 0.5F, (float)var4 + 12.0F / 16.0F * var10, (float)var6 + 0.5F);
+            RenderDragon.Api.Rotate(-var12, 0.0F, 1.0F, 0.0F);
+            RenderDragon.Api.Translate(0.0F, -(5.0F / 16.0F), -(7.0F / 16.0F));
             signModel.signStick.visible = false;
         }
 
         bindTextureByName("/item/sign.png");
-        GLManager.GL.PushMatrix();
-        GLManager.GL.Scale(var10, -var10, -var10);
+        RenderDragon.Api.PushMatrix();
+        RenderDragon.Api.Scale(var10, -var10, -var10);
         signModel.Render();
-        GLManager.GL.PopMatrix();
+        RenderDragon.Api.PopMatrix();
         TextRenderer var17 = getFontRenderer();
         var12 = (float)(1.0D / 60.0D) * var10;
-        GLManager.GL.Translate(0.0F, 0.5F * var10, 0.07F * var10);
-        GLManager.GL.Scale(var12, -var12, var12);
-        GLManager.GL.Normal3(0.0F, 0.0F, -1.0F * var12);
-        GLManager.GL.DepthMask(false);
+        RenderDragon.Api.Translate(0.0F, 0.5F * var10, 0.07F * var10);
+        RenderDragon.Api.Scale(var12, -var12, var12);
+        RenderDragon.Api.Normal3(0.0F, 0.0F, -1.0F * var12);
+        RenderDragon.Api.DepthMask(false);
 
         for (int var14 = 0; var14 < var1.Texts.Length; ++var14)
         {
@@ -75,9 +75,9 @@ public class BlockEntitySignRenderer : BlockEntitySpecialRenderer
             }
         }
 
-        GLManager.GL.DepthMask(true);
-        GLManager.GL.Color4(1.0F, 1.0F, 1.0F, 1.0F);
-        GLManager.GL.PopMatrix();
+        RenderDragon.Api.DepthMask(true);
+        RenderDragon.Api.Color4(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderDragon.Api.PopMatrix();
     }
 
     public override void renderTileEntityAt(BlockEntity blockEntity, double x, double y, double z, float tickDelta)

@@ -34,7 +34,7 @@ public class CreeperEntityRenderer : LivingEntityRenderer
         progress *= progress;
         float scaleX = (1.0F + progress * 0.4F) * pulse;
         float scaleY = (1.0F + progress * 0.1F) / pulse;
-        GLManager.GL.Scale(scaleX, scaleY, scaleX);
+        RenderDragon.Api.Scale(scaleX, scaleY, scaleX);
     }
 
     protected int UpdateCreeperColorMultiplier(EntityCreeper ent, float var2, float partialTick)
@@ -72,28 +72,28 @@ public class CreeperEntityRenderer : LivingEntityRenderer
             {
                 float var4 = ent.Age + var3;
                 loadTexture("/armor/power.png");
-                GLManager.GL.MatrixMode(GLEnum.Texture2D); //wtf?
-                GLManager.GL.LoadIdentity();
+                RenderDragon.Api.MatrixMode(GLEnum.Texture2D); //wtf?
+                RenderDragon.Api.LoadIdentity();
                 float var5 = var4 * 0.01F;
                 float var6 = var4 * 0.01F;
-                GLManager.GL.Translate(var5, var6, 0.0F);
+                RenderDragon.Api.Translate(var5, var6, 0.0F);
                 setRenderPassModel(model);
-                GLManager.GL.MatrixMode(GLEnum.Modelview);
-                GLManager.GL.Enable(GLEnum.Blend);
+                RenderDragon.Api.MatrixMode(GLEnum.Modelview);
+                RenderDragon.Api.Enable(GLEnum.Blend);
                 float var7 = 0.5F;
-                GLManager.GL.Color4(var7, var7, var7, 1.0F);
-                GLManager.GL.Disable(GLEnum.Lighting);
-                GLManager.GL.BlendFunc(GLEnum.One, GLEnum.One);
+                RenderDragon.Api.Color4(var7, var7, var7, 1.0F);
+                RenderDragon.Api.Disable(GLEnum.Lighting);
+                RenderDragon.Api.BlendFunc(GLEnum.One, GLEnum.One);
                 return true;
             }
 
             if (var2 == 2)
             {
-                GLManager.GL.MatrixMode(GLEnum.Texture);
-                GLManager.GL.LoadIdentity();
-                GLManager.GL.MatrixMode(GLEnum.Modelview);
-                GLManager.GL.Enable(GLEnum.Lighting);
-                GLManager.GL.Disable(GLEnum.Blend);
+                RenderDragon.Api.MatrixMode(GLEnum.Texture);
+                RenderDragon.Api.LoadIdentity();
+                RenderDragon.Api.MatrixMode(GLEnum.Modelview);
+                RenderDragon.Api.Enable(GLEnum.Lighting);
+                RenderDragon.Api.Disable(GLEnum.Blend);
             }
         }
 
