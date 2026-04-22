@@ -4,7 +4,6 @@ namespace BetaSharp.Client.Rendering.Core;
 
 public class VertexBuffer<T> : IVertexBuffer<T> where T : unmanaged
 {
-    public static long Allocated;
     private uint id;
     private bool disposed;
     private int size;
@@ -15,7 +14,7 @@ public class VertexBuffer<T> : IVertexBuffer<T> where T : unmanaged
         RenderDragon.Api.BindBuffer(GLEnum.ArrayBuffer, id);
         RenderDragon.Api.BufferData<T>(GLEnum.ArrayBuffer, data, GLEnum.StaticDraw);
         size = data.Length * sizeof(T);
-        Allocated += size;
+        VertexBufferStats.AllocatedBytes += size;
     }
 
     public void Bind()
@@ -40,9 +39,9 @@ public class VertexBuffer<T> : IVertexBuffer<T> where T : unmanaged
             RenderDragon.Api.BufferData(GLEnum.ArrayBuffer, (nuint)(data.Length * sizeof(T)), (void*)0, GLEnum.StaticDraw);
             RenderDragon.Api.BufferData<T>(GLEnum.ArrayBuffer, data, GLEnum.StaticDraw);
 
-            Allocated -= size;
+            VertexBufferStats.AllocatedBytes -= size;
             size = data.Length * sizeof(T);
-            Allocated += size;
+            VertexBufferStats.AllocatedBytes += size;
         }
     }
 
@@ -58,7 +57,7 @@ public class VertexBuffer<T> : IVertexBuffer<T> where T : unmanaged
         if (id != 0)
         {
             RenderDragon.Api.DeleteBuffer(id);
-            Allocated -= size;
+            VertexBufferStats.AllocatedBytes -= size;
             size = 0;
             id = 0;
         }

@@ -509,7 +509,7 @@ public partial class BetaSharp :
             Mouse.destroy();
             Keyboard.destroy();
 
-            GLTexture.LogLeakReport();
+            RenderDragon.LogResourceLeaks();
         }
         finally
         {
@@ -794,12 +794,12 @@ public partial class BetaSharp :
         MetricRegistry.Set(RenderMetrics.ChunksFrustum, cr.ChunksInFrustum);
         MetricRegistry.Set(RenderMetrics.ChunksOccluded, cr.ChunksOccluded);
         MetricRegistry.Set(RenderMetrics.ChunksRendered, cr.ChunksRendered);
-        MetricRegistry.Set(RenderMetrics.VboAllocatedMb, (float)(VertexBuffer<ChunkVertex>.Allocated / 1_000_000.0));
+        MetricRegistry.Set(RenderMetrics.VboAllocatedMb, (float)(RenderDragon.GetAllocatedVertexBufferBytes() / 1_000_000.0));
         MetricRegistry.Set(RenderMetrics.MeshVersionAllocated, ChunkMeshVersion.TotalAllocated);
         MetricRegistry.Set(RenderMetrics.MeshVersionReleased, ChunkMeshVersion.TotalReleased);
         MetricRegistry.Set(RenderMetrics.TextureBindsLastFrame, TextureStats.BindsLastFrame);
         MetricRegistry.Set(RenderMetrics.TextureAvgBinds, (float)TextureStats.AverageBindsPerFrame);
-        MetricRegistry.Set(RenderMetrics.TextureActive, GLTexture.ActiveTextureCount);
+        MetricRegistry.Set(RenderMetrics.TextureActive, RenderDragon.GetActiveTextureCount());
         MetricRegistry.Set(RenderMetrics.EntitiesRendered, WorldRenderer.CountEntitiesRendered);
         MetricRegistry.Set(RenderMetrics.EntitiesHidden, WorldRenderer.CountEntitiesHidden);
         MetricRegistry.Set(RenderMetrics.EntitiesTotal, WorldRenderer.CountEntitiesTotal);

@@ -7,13 +7,16 @@ namespace BetaSharp.Client.Rendering.Core;
 
 public static class RenderDragon
 {
-    public static IGL Api { get; private set; } = null!;
+    private static IRenderBackend? s_backend;
+
+    public static IGL Api => Backend.Api;
+    public static IRenderBackend Backend => s_backend ?? throw new InvalidOperationException("RenderDragon backend has not been bound yet.");
     public static RenderBackendPreference PreferredBackend { get; private set; } = RenderBackendPreference.Auto;
     public static RenderBackendKind RequestedBackend { get; private set; } = RenderBackendKind.OpenGL;
     public static RenderBackendKind ActiveBackend { get; private set; } = RenderBackendKind.OpenGL;
     public static string? FallbackReason { get; private set; }
 
-    public static bool IsInitialized => Api is not null;
+    public static bool IsInitialized => s_backend is not null;
     public static bool IsUsingFallback => FallbackReason is not null;
 
     public static RenderBackendKind SelectBackend(RenderBackendPreference preference, ILogger? logger = null)
@@ -46,7 +49,7 @@ public static class RenderDragon
             throw new NotSupportedException($"RenderDragon cannot bind an OpenGL API while the active backend is {ActiveBackend}.");
         }
 
-        Api = new EmulatedGL(silkGl);
+        s_backend = new OpenGLRenderBackend(silkGl);
 
         logger?.LogInformation(
             "RenderDragon API bound. Preferred={PreferredBackend}, Requested={RequestedBackend}, Active={ActiveBackend}",
@@ -55,49 +58,30 @@ public static class RenderDragon
             ActiveBackend);
     }
 
-    public static ITexture CreateTexture(string source) => ActiveBackend switch
-    {
-        RenderBackendKind.OpenGL => new GLTexture(source),
-        RenderBackendKind.Vulkan => throw CreateUnsupportedBackendException("texture creation"),
-        _ => throw CreateUnsupportedBackendException("texture creation"),
-    };
-
-    public static IFramebuffer CreateFramebuffer(int width, int height) => ActiveBackend switch
-    {
-        RenderBackendKind.OpenGL => new Framebuffer(width, height),
-        RenderBackendKind.Vulkan => throw CreateUnsupportedBackendException("framebuffer creation"),
-        _ => throw CreateUnsupportedBackendException("framebuffer creation"),
-    };
-
-    public static IShader CreateShader(string vertexShaderSource, string fragmentShaderSource) => ActiveBackend switch
-    {
-        RenderBackendKind.OpenGL => new Shader(vertexShaderSource, fragmentShaderSource),
-        RenderBackendKind.Vulkan => throw CreateUnsupportedBackendException("shader creation"),
-        _ => throw CreateUnsupportedBackendException("shader creation"),
-    };
-
-    public static IVertexArray CreateVertexArray() => ActiveBackend switch
-    {
-        RenderBackendKind.OpenGL => new VertexArray(),
-        RenderBackendKind.Vulkan => throw CreateUnsupportedBackendException("vertex array creation"),
-        _ => throw CreateUnsupportedBackendException("vertex array creation"),
-    };
-
-    public static IVertexBuffer<T> CreateVertexBuffer<T>(Span<T> data) where T : unmanaged => ActiveBackend switch
-    {
-        RenderBackendKind.OpenGL => new VertexBuffer<T>(data),
-        RenderBackendKind.Vulkan => throw CreateUnsupportedBackendException("vertex buffer creation"),
-        _ => throw CreateUnsupportedBackendException("vertex buffer creation"),
-    };
+    public static ITexture CreateTexture(string source) => Backend.CreateTexture(source);
+    public static IFramebuffer CreateFramebuffer(int width, int height) => Backend.CreateFramebuffer(width, height);
+    public static IShader CreateShader(string vertexShaderSource, string fragmentShaderSource) => Backend.CreateShader(vertexShaderSource, fragmentShaderSource);
+    public static IVertexArray CreateVertexArray() => Backend.CreateVertexArray();
+    public static IVertexBuffer<T> CreateVertexBuffer<T>(Span<T> data) where T : unmanaged => Backend.CreateVertexBuffer(data);
 
     public static void UnbindFramebuffer()
     {
-        Api.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+        Backend.UnbindFramebuffer();
     }
 
     public static void UnbindVertexArray()
     {
-        Api.BindVertexArray(0);
+        Backend.UnbindVertexArray();
+    }
+
+    public static long GetAllocatedVertexBufferBytes() => IsInitialized ? Backend.GetAllocatedVertexBufferBytes() : 0;
+    public static int GetActiveTextureCount() => IsInitialized ? Backend.GetActiveTextureCount() : 0;
+    public static void LogResourceLeaks()
+    {
+        if (IsInitialized)
+        {
+            Backend.LogResourceLeaks();
+        }
     }
 
     private static RenderBackendKind ResolveRequestedBackend(RenderBackendPreference preference) => preference switch
@@ -106,9 +90,4 @@ public static class RenderDragon
         RenderBackendPreference.Auto => RenderBackendKind.OpenGL,
         _ => RenderBackendKind.OpenGL,
     };
-
-    private static NotSupportedException CreateUnsupportedBackendException(string operation)
-    {
-        return new NotSupportedException($"RenderDragon does not yet support {operation} for backend {ActiveBackend}.");
-    }
 }
