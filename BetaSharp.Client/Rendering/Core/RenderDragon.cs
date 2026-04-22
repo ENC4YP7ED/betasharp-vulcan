@@ -75,6 +75,12 @@ public static class RenderDragon
         Backend.SetupPerspectiveProjection(fovY, aspect, zNear, zFar, projectionTranslateX, projectionTranslateY, projectionScale);
     public static void ApplyDamageTilt(float attackedYaw, float hurtRollDegrees) => Backend.ApplyDamageTilt(attackedYaw, hurtRollDegrees);
     public static void ApplyViewBobbing(float translateX, float translateY, float rollDegrees, float pitchDegrees) => Backend.ApplyViewBobbing(translateX, translateY, rollDegrees, pitchDegrees);
+    public static void ApplySleepingCameraTransform(float translateY, float bedRotationDegrees, float yawDegrees, float pitchDegrees) => Backend.ApplySleepingCameraTransform(translateY, bedRotationDegrees, yawDegrees, pitchDegrees);
+    public static void ApplyThirdPersonDebugCameraTransform(float distance, float pitchDegrees, float yawDegrees) => Backend.ApplyThirdPersonDebugCameraTransform(distance, pitchDegrees, yawDegrees);
+    public static void ApplyThirdPersonChaseCameraTransform(float distance, bool frontThirdPerson) => Backend.ApplyThirdPersonChaseCameraTransform(distance, frontThirdPerson);
+    public static void ApplyNearPlaneOffset(float distance) => Backend.ApplyNearPlaneOffset(distance);
+    public static void ApplyCameraOrientation(float pitchDegrees, float yawDegrees) => Backend.ApplyCameraOrientation(pitchDegrees, yawDegrees);
+    public static void ApplyEyeHeightOffset(float eyeHeightOffset) => Backend.ApplyEyeHeightOffset(eyeHeightOffset);
 
     public static void UnbindFramebuffer()
     {

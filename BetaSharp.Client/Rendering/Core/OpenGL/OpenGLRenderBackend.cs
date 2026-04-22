@@ -105,6 +105,52 @@ public sealed class OpenGLRenderBackend : IRenderBackend
         Api.Rotate(pitchDegrees, 1.0f, 0.0f, 0.0f);
     }
 
+    public void ApplySleepingCameraTransform(float translateY, float bedRotationDegrees, float yawDegrees, float pitchDegrees)
+    {
+        Api.Translate(0.0f, translateY, 0.0f);
+
+        if (bedRotationDegrees != 0.0f)
+        {
+            Api.Rotate(bedRotationDegrees, 0.0f, 1.0f, 0.0f);
+        }
+
+        Api.Rotate(yawDegrees, 0.0f, -1.0f, 0.0f);
+        Api.Rotate(pitchDegrees, -1.0f, 0.0f, 0.0f);
+    }
+
+    public void ApplyThirdPersonDebugCameraTransform(float distance, float pitchDegrees, float yawDegrees)
+    {
+        Api.Translate(0.0f, 0.0f, -distance);
+        Api.Rotate(pitchDegrees, 1.0f, 0.0f, 0.0f);
+        Api.Rotate(yawDegrees, 0.0f, 1.0f, 0.0f);
+    }
+
+    public void ApplyThirdPersonChaseCameraTransform(float distance, bool frontThirdPerson)
+    {
+        Api.Translate(0.0f, 0.0f, -distance);
+
+        if (frontThirdPerson)
+        {
+            Api.Rotate(180.0f, 0.0f, 1.0f, 0.0f);
+        }
+    }
+
+    public void ApplyNearPlaneOffset(float distance)
+    {
+        Api.Translate(0.0f, 0.0f, -distance);
+    }
+
+    public void ApplyCameraOrientation(float pitchDegrees, float yawDegrees)
+    {
+        Api.Rotate(pitchDegrees, 1.0f, 0.0f, 0.0f);
+        Api.Rotate(yawDegrees, 0.0f, 1.0f, 0.0f);
+    }
+
+    public void ApplyEyeHeightOffset(float eyeHeightOffset)
+    {
+        Api.Translate(0.0f, eyeHeightOffset, 0.0f);
+    }
+
     public void UnbindFramebuffer()
     {
         Api.BindFramebuffer(FramebufferTarget.Framebuffer, 0);

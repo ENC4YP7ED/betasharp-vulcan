@@ -22,6 +22,12 @@ public interface IRenderBackend
     void SetupPerspectiveProjection(float fovY, float aspect, float zNear, float zFar, float projectionTranslateX = 0.0f, float projectionTranslateY = 0.0f, float projectionScale = 1.0f);
     void ApplyDamageTilt(float attackedYaw, float hurtRollDegrees);
     void ApplyViewBobbing(float translateX, float translateY, float rollDegrees, float pitchDegrees);
+    void ApplySleepingCameraTransform(float translateY, float bedRotationDegrees, float yawDegrees, float pitchDegrees);
+    void ApplyThirdPersonDebugCameraTransform(float distance, float pitchDegrees, float yawDegrees);
+    void ApplyThirdPersonChaseCameraTransform(float distance, bool frontThirdPerson);
+    void ApplyNearPlaneOffset(float distance);
+    void ApplyCameraOrientation(float pitchDegrees, float yawDegrees);
+    void ApplyEyeHeightOffset(float eyeHeightOffset);
 
     void UnbindFramebuffer();
     void UnbindVertexArray();

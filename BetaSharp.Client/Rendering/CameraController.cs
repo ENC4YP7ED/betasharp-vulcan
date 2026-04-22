@@ -126,6 +126,8 @@ public class CameraController
     {
         EntityLiving cameraEntity = _game.Camera;
         float eyeHeightOffset = cameraEntity.StandingEyeHeight - 1.62F;
+        float interpolatedPitch = cameraEntity.PrevPitch + (cameraEntity.Pitch - cameraEntity.PrevPitch) * tickDelta;
+        float interpolatedYaw = cameraEntity.PrevYaw + (cameraEntity.Yaw - cameraEntity.PrevYaw) * tickDelta;
         double x = cameraEntity.PrevX + (cameraEntity.X - cameraEntity.PrevX) * (double)tickDelta;
         double y = cameraEntity.PrevY + (cameraEntity.Y - cameraEntity.PrevY) * (double)tickDelta - (double)eyeHeightOffset;
         double z = cameraEntity.PrevZ + (cameraEntity.Z - cameraEntity.PrevZ) * (double)tickDelta;
@@ -135,19 +137,21 @@ public class CameraController
         if (cameraEntity.isSleeping())
         {
             eyeHeightOffset = (float)((double)eyeHeightOffset + 1.0D);
-            RenderDragon.Api.Translate(0.0F, 0.3F, 0.0F);
             if (!_game.Options.DebugCamera)
             {
+                float bedRotation = 0.0F;
                 int blockId = _game.World.Reader.GetBlockId(MathHelper.Floor(cameraEntity.X), MathHelper.Floor(cameraEntity.Y), MathHelper.Floor(cameraEntity.Z));
                 if (blockId == Block.Bed.id)
                 {
                     int meta = _game.World.Reader.GetBlockMeta(MathHelper.Floor(cameraEntity.X), MathHelper.Floor(cameraEntity.Y), MathHelper.Floor(cameraEntity.Z));
-                    int rotation = meta & 3;
-                    RenderDragon.Api.Rotate(rotation * 90, 0.0F, 1.0F, 0.0F);
+                    bedRotation = (meta & 3) * 90.0F;
                 }
 
-                RenderDragon.Api.Rotate(cameraEntity.PrevYaw + (cameraEntity.Yaw - cameraEntity.PrevYaw) * tickDelta + 180.0F, 0.0F, -1.0F, 0.0F);
-                RenderDragon.Api.Rotate(cameraEntity.PrevPitch + (cameraEntity.Pitch - cameraEntity.PrevPitch) * tickDelta, -1.0F, 0.0F, 0.0F);
+                RenderDragon.ApplySleepingCameraTransform(0.3F, bedRotation, interpolatedYaw + 180.0F, interpolatedPitch);
+            }
+            else
+            {
+                RenderDragon.ApplyEyeHeightOffset(0.3F);
             }
         }
         else if (_game.Options.CameraMode == EnumCameraMode.ThirdPerson || _game.Options.CameraMode == EnumCameraMode.FrontThirdPerson)
@@ -169,9 +173,7 @@ public class CameraController
             {
                 targetYaw = _prevThirdPersonYaw + (_thirdPersonYaw - _prevThirdPersonYaw) * tickDelta;
                 targetPitch = _prevThirdPersonPitch + (_thirdPersonPitch - _prevThirdPersonPitch) * tickDelta;
-                RenderDragon.Api.Translate(0.0F, 0.0F, (float)-currentDistance);
-                RenderDragon.Api.Rotate(targetPitch, 1.0F, 0.0F, 0.0F);
-                RenderDragon.Api.Rotate(targetYaw, 0.0F, 1.0F, 0.0F);
+                RenderDragon.ApplyThirdPersonDebugCameraTransform((float)currentDistance, targetPitch, targetYaw);
             }
             else
             {
@@ -215,28 +217,19 @@ public class CameraController
                     }
                 }
 
-                RenderDragon.Api.Rotate(cameraEntity.Pitch - targetPitch, 1.0F, 0.0F, 0.0F);
-                RenderDragon.Api.Rotate(cameraEntity.Yaw - targetYaw, 0.0F, 1.0F, 0.0F);
-                RenderDragon.Api.Translate(0.0F, 0.0F, (float)-currentDistance);
-                if (_game.Options.CameraMode == EnumCameraMode.FrontThirdPerson)
-                {
-                    RenderDragon.Api.Rotate(180.0F, 0.0F, 1.0F, 0.0F);
-                }
-                RenderDragon.Api.Rotate(targetYaw - cameraEntity.Yaw, 0.0F, 1.0F, 0.0F);
-                RenderDragon.Api.Rotate(targetPitch - cameraEntity.Pitch, 1.0F, 0.0F, 0.0F);
+                RenderDragon.ApplyThirdPersonChaseCameraTransform((float)currentDistance, _game.Options.CameraMode == EnumCameraMode.FrontThirdPerson);
             }
         }
         else
         {
-            RenderDragon.Api.Translate(0.0F, 0.0F, -0.1F);
+            RenderDragon.ApplyNearPlaneOffset(0.1F);
         }
 
         if (!_game.Options.DebugCamera)
         {
-            RenderDragon.Api.Rotate(cameraEntity.PrevPitch + (cameraEntity.Pitch - cameraEntity.PrevPitch) * tickDelta, 1.0F, 0.0F, 0.0F);
-            RenderDragon.Api.Rotate(cameraEntity.PrevYaw + (cameraEntity.Yaw - cameraEntity.PrevYaw) * tickDelta + 180.0F, 0.0F, 1.0F, 0.0F);
+            RenderDragon.ApplyCameraOrientation(interpolatedPitch, interpolatedYaw + 180.0F);
         }
 
-        RenderDragon.Api.Translate(0.0F, eyeHeightOffset, 0.0F);
+        RenderDragon.ApplyEyeHeightOffset(eyeHeightOffset);
     }
 }
